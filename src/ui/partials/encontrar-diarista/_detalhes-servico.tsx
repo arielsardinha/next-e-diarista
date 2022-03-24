@@ -101,27 +101,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
                 Qual o tamanho da sua casa ?
             </Typography>
-            <ItemsContainer>
-                {houseParts.map((item) => (
-                    <Controller
-                        key={item.name}
-                        name={`faxina.${item.name}`}
-                        defaultValue={0}
-                        control={control}
-                        render={({ field }) => (
-                            <ItemCounter
-                                plural={item.plural}
-                                counter={field.value}
-                                label={item.singular}
-                                onInc={() => field.onChange(field.value + 1)}
-                                onDec={() =>
-                                    field.onChange(Math.max(0, field.value - 1))
-                                }
-                            />
-                        )}
-                    />
-                ))}
-            </ItemsContainer>
+          
             <Divider sx={{ my: 5 }} />
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
                 Qual data você gostaria de receber o/a diarista ?
