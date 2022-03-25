@@ -11,6 +11,7 @@ import Breadcrumb from 'ui/components/navigation/Breadcrumb/Breadcrumb';
 import { FormProvider } from 'react-hook-form';
 import DetalhesServico from './_detalhes-servico';
 import CadastroClinte, { LoginCliente } from './_cadastro-clinte';
+import InformacoesPagamento from './_informacoes-pagamento';
 
 // import { Component } from './_contratacao.styled';
 
@@ -31,6 +32,8 @@ const Contratacao: React.FC = () => {
             onLoginFormSubmit,
             loginError,
             setLoginError,
+            onPaymentFormSubmit,
+            paymentForm,
         } = useContratacao();
     return (
         <div>
@@ -104,6 +107,18 @@ const Contratacao: React.FC = () => {
                                         </Typography>
                                     )}
                                     <LoginCliente onBack={() => setStep(1)} />
+                                </form>
+                            </FormProvider>
+                        )}
+
+                        {step == 3 && (
+                            <FormProvider {...clientForm}>
+                                <form
+                                    onSubmit={paymentForm.handleSubmit(
+                                        onPaymentFormSubmit
+                                    )}
+                                >
+                                    <InformacoesPagamento />
                                 </form>
                             </FormProvider>
                         )}
