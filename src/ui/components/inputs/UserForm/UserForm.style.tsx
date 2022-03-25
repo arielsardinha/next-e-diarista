@@ -107,3 +107,14 @@ export const PictureSelection = styled(BaseGrid)`
     grid-template-columns: 1fr;
     padding: 0;
 `;
+
+export const LoginData = styled(BaseGrid)`
+    ${({ theme }) => theme.breakpoints.down('md')} {
+        text-align: right;
+    }
+
+    a {
+        text-decoration: underline;
+        color: ${({ theme }) => theme.palette.text.secondary};
+    }
+`;

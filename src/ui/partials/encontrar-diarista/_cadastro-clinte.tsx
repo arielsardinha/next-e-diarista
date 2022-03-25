@@ -1,10 +1,12 @@
 import { Button, Container, Divider, Typography } from '@material-ui/core';
 import React from 'react';
 import {
+    LoginForm,
     NewContactForm,
     PictureForm,
     UserDataForm,
 } from 'ui/components/inputs/UserForm/UserForm';
+import { LoginButtonsContainer } from './_cadastro-clinte.styled';
 
 // import { Component } from './_cadastro-clinte.styled';
 
@@ -56,5 +58,23 @@ const CadastroClinte: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     );
 };
 
+export const LoginCliente: React.FC<{ onBack: () => void }> = ({ onBack }) => (
+    <>
+        <LoginForm />
+        <LoginButtonsContainer>
+            <Button
+                variant={'outlined'}
+                color={'primary'}
+                type={'button'}
+                onClick={onBack}
+            >
+                Voltar para detalhes da diária
+            </Button>
+            <Button variant={'contained'} color={'secondary'} type={'submit'}>
+                Ir para pagamento
+            </Button>
+        </LoginButtonsContainer>
+    </>
+);
+
 export default CadastroClinte;
-1;

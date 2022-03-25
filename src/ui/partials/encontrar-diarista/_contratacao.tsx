@@ -1,4 +1,4 @@
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, Typography } from '@material-ui/core';
 import useContratacao from 'data/hooks/pages/useContratacao.page';
 import useIsMobile from 'data/hooks/useIsMobile';
 import React from 'react';
@@ -10,7 +10,7 @@ import { PageFormContainer } from 'ui/components/inputs/UserForm/UserForm.style'
 import Breadcrumb from 'ui/components/navigation/Breadcrumb/Breadcrumb';
 import { FormProvider } from 'react-hook-form';
 import DetalhesServico from './_detalhes-servico';
-import CadastroClinte from './_cadastro-clinte';
+import CadastroClinte, { LoginCliente } from './_cadastro-clinte';
 
 // import { Component } from './_contratacao.styled';
 
@@ -27,6 +27,10 @@ const Contratacao: React.FC = () => {
             setHasLogin,
             clientForm,
             onClientFormSubmit,
+            loginForm,
+            onLoginFormSubmit,
+            loginError,
+            setLoginError,
         } = useContratacao();
     return (
         <div>
@@ -83,6 +87,26 @@ const Contratacao: React.FC = () => {
                                 <CadastroClinte onBack={() => setStep(1)} />
                             </form>
                         </FormProvider>
+                        {step == 2 && hasLogin && (
+                            <FormProvider {...loginForm}>
+                                <form
+                                    onSubmit={loginForm.handleSubmit(
+                                        onLoginFormSubmit
+                                    )}
+                                >
+                                    {loginError && (
+                                        <Typography
+                                            color={'error'}
+                                            align={'center'}
+                                            sx={{ mb: 2 }}
+                                        >
+                                            {loginError}dwadadad
+                                        </Typography>
+                                    )}
+                                    <LoginCliente onBack={() => setStep(1)} />
+                                </form>
+                            </FormProvider>
+                        )}
                     </Paper>
                     <SideInformation
                         title={'Detalhes'}

@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormSchemaService } from 'data/services/FormSchemaService';
 import {
     CadastroClienteFormDataInterface,
+    LoginFormDataInterface,
     NovaDiariaFormDataInterface,
 } from 'data/@types/FormInterface';
 import { ServicoInterface } from 'data/@types/ServicoInterface';
@@ -11,6 +12,7 @@ import { ServicoInterface } from 'data/@types/ServicoInterface';
 export default function useContratacao() {
     const [step, setStep] = useState(2),
         [hasLogin, setHasLogin] = useState(false),
+        [loginError, setLoginError] = useState(''),
         breadcrumItems = ['Detalhes da diária', 'Idntificação', 'Pagamento'],
         serviceForm = useForm<NovaDiariaFormDataInterface>({
             resolver: yupResolver(
@@ -20,6 +22,9 @@ export default function useContratacao() {
             ),
         }),
         clientForm = useForm<CadastroClienteFormDataInterface>({
+            resolver: yupResolver(FormSchemaService.login()),
+        }),
+        loginForm = useForm<LoginFormDataInterface>({
             resolver: yupResolver(
                 FormSchemaService.userData().concat(
                     FormSchemaService.newContact()
@@ -56,6 +61,10 @@ export default function useContratacao() {
         console.log(data);
     }
 
+    function onLoginFormSubmit(data: LoginFormDataInterface) {
+        console.log(data);
+    }
+
     return {
         step,
         setStep,
@@ -64,8 +73,12 @@ export default function useContratacao() {
         onServiceFormSubmit,
         clientForm,
         onClientFormSubmit,
+        loginForm,
+        onLoginFormSubmit,
         servicos,
         hasLogin,
         setHasLogin,
+        loginError,
+        setLoginError,
     };
 }

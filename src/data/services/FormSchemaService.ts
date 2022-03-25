@@ -197,4 +197,12 @@ export const FormSchemaService = {
             })
             .defined();
     },
+    login() {
+        return yup.object().shape({
+            login: yup
+                .object()
+                .shape({ email: yup.string().email('E-mail inválido') }),
+            password: yup.string().min(5, 'Senha muito curta'),
+        });
+    },
 };
