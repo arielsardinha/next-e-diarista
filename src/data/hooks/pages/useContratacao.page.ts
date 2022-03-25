@@ -11,7 +11,7 @@ import {
 import { ServicoInterface } from 'data/@types/ServicoInterface';
 
 export default function useContratacao() {
-    const [step, setStep] = useState(3),
+    const [step, setStep] = useState(4),
         [hasLogin, setHasLogin] = useState(false),
         [loginError, setLoginError] = useState(''),
         breadcrumItems = ['Detalhes da diária', 'Idntificação', 'Pagamento'],
