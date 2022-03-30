@@ -1,10 +1,13 @@
 import React from 'react';
 import { ExternalServicesProvider } from './ExternalServicesContext';
+import { UserProvider } from './UserContext';
 
 export const MainProvider: React.FC = ({ children }) => {
     return (
         <>
-            <ExternalServicesProvider>{children}</ExternalServicesProvider>
+            <ExternalServicesProvider>
+                <UserProvider>{children}</UserProvider>
+            </ExternalServicesProvider>
         </>
     );
 };
