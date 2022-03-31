@@ -1,4 +1,13 @@
 export const DateService = {
+    addHours(startTime: string, hours: number): string {
+        let [hour, minute] = startTime.split(':').map(Number);
+        hour = Math.min(hours + hour, 23);
+        const newHour = hour.toString().padStart(2, '0'),
+            minutes = minute.toString().padStart(2, '0');
+
+        return `${newHour}:${minutes}`;
+    },
+
     minAdultBirthday(): Date {
         const date = new Date();
         date.setFullYear(date.getFullYear() - 18);
