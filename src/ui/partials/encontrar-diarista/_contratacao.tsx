@@ -1,14 +1,21 @@
-import { Box, Button, Paper, Typography } from '@material-ui/core';
+import React from 'react';
+import { FormProvider } from 'react-hook-form';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Paper,
+    Typography,
+    Container,
+} from '@material-ui/core';
 import useContratacao from 'data/hooks/pages/useContratacao.page';
 import useIsMobile from 'data/hooks/useIsMobile';
-import React from 'react';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import SideInformation from 'ui/components/data-display/SideInformation/SideInformation';
 import SafeEnvironment from 'ui/components/feedback/SafeEnvironment/SafeEnvironment';
 import { UserFormContainer } from 'ui/components/inputs/UserForm/UserForm';
 import { PageFormContainer } from 'ui/components/inputs/UserForm/UserForm.style';
 import Breadcrumb from 'ui/components/navigation/Breadcrumb/Breadcrumb';
-import { FormProvider } from 'react-hook-form';
 import DetalhesServico from './_detalhes-servico';
 import CadastroClinte, { LoginCliente } from './_cadastro-clinte';
 import InformacoesPagamento from './_informacoes-pagamento';
@@ -36,6 +43,14 @@ const Contratacao: React.FC = () => {
             onPaymentFormSubmit,
             paymentForm,
         } = useContratacao();
+
+    if (!servicos || servicos.length < 1) {
+        return (
+            <Container sx={{ textAlign: 'center', my: 10 }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
     return (
         <div>
             {!isMobile && <SafeEnvironment />}
