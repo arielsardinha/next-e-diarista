@@ -1,9 +1,11 @@
 import useCities from 'data/hooks/useCities.hook';
 import { LocationService } from 'data/services/LocationService';
 import { useFormContext } from 'react-hook-form';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useContext } from 'react';
+import { UserContext } from 'data/contexts/UserContext';
 
 export default function useAddressForm() {
+    const { userAddress, user } = useContext(UserContext).userState;
     const {
             register,
             control,
@@ -18,9 +20,10 @@ export default function useAddressForm() {
         ]),
         estados = LocationService.estados(),
         listaCidades = useCities(addressState),
-        opcoesCidades = useMemo(() => listaCidades.map((item) => item.cidade), [
-            listaCidades,
-        ]);
+        opcoesCidades = useMemo(
+            () => listaCidades.map((item) => item.cidade),
+            [listaCidades]
+        );
 
     useEffect(() => {
         register('endereco.codigo_ibge');
@@ -65,5 +68,7 @@ export default function useAddressForm() {
         addressCity,
         addressCep,
         register,
+        userAddress,
+        user,
     };
 }
