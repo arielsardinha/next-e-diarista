@@ -30,6 +30,7 @@
         "react-dom": "17.0.2",
         "react-hook-form": "^7.12.2",
         "react-input-mask": "^2.0.4",
+        "swr": "^1.2.2",
         "uuid": "^3.4.0",
         "yup": "^0.32.9"
     },
