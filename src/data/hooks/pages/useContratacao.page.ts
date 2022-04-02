@@ -20,6 +20,9 @@ import {
     ApiServiceHateoas,
     linksResolver,
 } from 'data/services/ApiService';
+import { UserContext } from 'data/contexts/UserContext';
+import { UserInterface } from 'data/@types/UserInterface';
+import { TextFormatService } from 'data/services/TextFormatService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -47,6 +50,7 @@ export default function useContratacao() {
             resolver: yupResolver(FormSchemaService.payment()),
         }),
         { externalServicesState } = useContext(ExternalServicesContext),
+        { userState, userDispatch } = useContext(UserContext),
         servicos = useApiHateoas<ServicoInterface[]>(
             externalServicesState.externalServices,
             'listar_servicos'
@@ -54,6 +58,7 @@ export default function useContratacao() {
         dadosFaxina = serviceForm.watch('faxina'),
         cepFaxina = serviceForm.watch('endereco.cep'),
         [podemosAtender, setPodemosAtender] = useState(true),
+        [novaDiaria, setNovaDiaria] = useState({} as DiariaInterface),
         tipoLimpeza = useMemo<ServicoInterface>(() => {
             if (servicos && dadosFaxina?.servico) {
                 const selectedService = servicos.find(
@@ -134,7 +139,11 @@ export default function useContratacao() {
     );
 
     function onServiceFormSubmit(data: NovaDiariaFormDataInterface) {
-        console.log(data);
+        if (userState.user.nome_completo) {
+            criarDiaria(userState.user);
+        } else {
+            setStep(2);
+        }
     }
 
     function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
@@ -202,6 +211,44 @@ export default function useContratacao() {
         }
 
         return Math.max(total, tipoLimpeza.valor_minimo);
+    }
+
+    async function criarDiaria(user: UserInterface) {
+        if (user.nome_completo) {
+            const serviceData = serviceForm.getValues();
+            ApiServiceHateoas(
+                user.links,
+                'cadastrar_diaria',
+                async (request) => {
+                    try {
+                        const novaDiaria = (
+                            await request<DiariaInterface>({
+                                data: {
+                                    ...serviceData.endereco,
+                                    ...serviceData.faxina,
+                                    cep: TextFormatService.getNumberFromText(
+                                        serviceData.endereco.cep
+                                    ),
+                                    preco: totalPrice,
+                                    tempo_atendimento:
+                                        TextFormatService.reverseDate(
+                                            (serviceData.faxina
+                                                .data_atendimento as string) +
+                                                'T' +
+                                                serviceData.faxina.hora_inicio
+                                        ),
+                                },
+                            })
+                        ).data;
+
+                        if (novaDiaria) {
+                            setStep(3);
+                            setNovaDiaria(novaDiaria);
+                        }
+                    } catch (error) {}
+                }
+            );
+        }
     }
 
     return {

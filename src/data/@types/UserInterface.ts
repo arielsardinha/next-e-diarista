@@ -1,3 +1,5 @@
+import { ApiLinksInterface } from "./ApiLinksInterface";
+
 export interface UserInterface {
     id?: number;
     password_confirmation?: string;
@@ -17,6 +19,7 @@ export interface UserInterface {
         access: string;
         refresh: string;
     };
+    links?: ApiLinksInterface[];
 }
 
 export interface UserShortInformationInterface {
