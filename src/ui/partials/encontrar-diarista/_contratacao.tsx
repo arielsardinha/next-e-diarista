@@ -47,6 +47,7 @@ const Contratacao: React.FC = () => {
             tamanhoCasa,
             tipoLimpeza,
             totalPrice,
+            podemosAtender,
         } = useContratacao(),
         dataAtendimento = serviceForm.watch('faxina.data_atendimento');
 
@@ -122,7 +123,11 @@ const Contratacao: React.FC = () => {
                                 )}
                                 hidden={step != 1}
                             >
-                                <DetalhesServico servicos={servicos} />
+                                <DetalhesServico
+                                    servicos={servicos}
+                                    comodos={tamanhoCasa.length}
+                                    podemosAtender={podemosAtender}
+                                />
                             </form>
                         </FormProvider>
                         <FormProvider {...clientForm}>

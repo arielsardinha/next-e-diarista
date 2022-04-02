@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormSchemaService } from 'data/services/FormSchemaService';
@@ -14,6 +14,8 @@ import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
 import { houseParts } from '@partials/encontrar-diarista/_detalhes-servico';
+import { ExternalServicesContext } from 'data/contexts/ExternalServicesContext';
+import { ApiService, linksResolver } from 'data/services/ApiService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -40,8 +42,11 @@ export default function useContratacao() {
         paymentForm = useForm<PagamentoFormDataInterface>({
             resolver: yupResolver(FormSchemaService.payment()),
         }),
+        { externalServicesState } = useContext(ExternalServicesContext),
         servicos = useApi<ServicoInterface[]>('/api/servicos').data,
         dadosFaxina = serviceForm.watch('faxina'),
+        cepFaxina = serviceForm.watch('endereco.cep'),
+        [podemosAtender, setPodemosAtender] = useState(true),
         tipoLimpeza = useMemo<ServicoInterface>(() => {
             if (servicos && dadosFaxina?.servico) {
                 const selectedService = servicos.find(
@@ -75,6 +80,29 @@ export default function useContratacao() {
                 dadosFaxina?.quantidade_outros,
             ]
         );
+    useEffect(() => {
+        const cep = ((cepFaxina as string) || '')?.replace(/\D/g, '');
+        if (ValidationService.cep(cep)) {
+            const linkDisponibilidade = linksResolver(
+                externalServicesState.externalServices,
+                'verificar_disponibilidade_atendimento'
+            );
+            if (linkDisponibilidade) {
+                ApiService.request<{ disponibilidade: boolean }>({
+                    url: linkDisponibilidade.uri + '?cep=' + cep,
+                    method: linkDisponibilidade.type,
+                })
+                    .then((response) => {
+                        setPodemosAtender(response.data.disponibilidade);
+                    })
+                    .catch((_error) => {
+                        setPodemosAtender(false);
+                    });
+            }
+        } else {
+            setPodemosAtender(true);
+        }
+    }, [cepFaxina]);
 
     useEffect(
         () => {
@@ -166,7 +194,7 @@ export default function useContratacao() {
                 tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
             total += tipoLimpeza.valor_sala * dadosFaxina.quantidade_salas;
         }
-        
+
         return Math.max(total, tipoLimpeza.valor_minimo);
     }
 
@@ -190,5 +218,6 @@ export default function useContratacao() {
         tamanhoCasa,
         tipoLimpeza,
         totalPrice,
+        podemosAtender,
     };
 }
