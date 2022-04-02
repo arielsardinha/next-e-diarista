@@ -9,13 +9,17 @@ import {
     PagamentoFormDataInterface,
 } from 'data/@types/FormInterface';
 import { ServicoInterface } from 'data/@types/ServicoInterface';
-import useApi from '../useApi.hook';
+import useApi, { useApiHateoas } from '../useApi.hook';
 import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
 import { houseParts } from '@partials/encontrar-diarista/_detalhes-servico';
 import { ExternalServicesContext } from 'data/contexts/ExternalServicesContext';
-import { ApiService, linksResolver } from 'data/services/ApiService';
+import {
+    ApiService,
+    ApiServiceHateoas,
+    linksResolver,
+} from 'data/services/ApiService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -43,7 +47,10 @@ export default function useContratacao() {
             resolver: yupResolver(FormSchemaService.payment()),
         }),
         { externalServicesState } = useContext(ExternalServicesContext),
-        servicos = useApi<ServicoInterface[]>('/api/servicos').data,
+        servicos = useApiHateoas<ServicoInterface[]>(
+            externalServicesState.externalServices,
+            'listar_servicos'
+        ).data,
         dadosFaxina = serviceForm.watch('faxina'),
         cepFaxina = serviceForm.watch('endereco.cep'),
         [podemosAtender, setPodemosAtender] = useState(true),
@@ -83,22 +90,21 @@ export default function useContratacao() {
     useEffect(() => {
         const cep = ((cepFaxina as string) || '')?.replace(/\D/g, '');
         if (ValidationService.cep(cep)) {
-            const linkDisponibilidade = linksResolver(
+            ApiServiceHateoas(
                 externalServicesState.externalServices,
-                'verificar_disponibilidade_atendimento'
-            );
-            if (linkDisponibilidade) {
-                ApiService.request<{ disponibilidade: boolean }>({
-                    url: linkDisponibilidade.uri + '?cep=' + cep,
-                    method: linkDisponibilidade.type,
-                })
-                    .then((response) => {
-                        setPodemosAtender(response.data.disponibilidade);
+                'verificar_disponibilidade_atendimento',
+                (request) => {
+                    request<{ disponibilidade: boolean }>({
+                        params: { cep },
                     })
-                    .catch((_error) => {
-                        setPodemosAtender(false);
-                    });
-            }
+                        .then((response) => {
+                            setPodemosAtender(response.data.disponibilidade);
+                        })
+                        .catch((_error) => {
+                            setPodemosAtender(false);
+                        });
+                }
+            );
         } else {
             setPodemosAtender(true);
         }
