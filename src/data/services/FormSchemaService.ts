@@ -187,7 +187,7 @@ export const FormSchemaService = {
                         'O servico não deve levar mais de 8 horas',
                         (value, data) => {
                             const [horaTermino] = value?.split(';') || [''],
-                                [horaInicio] = data.parent.hora_inicio.split(
+                                [horaInicio] = data.parent.hora_inicio?.split(
                                     ';'
                                 ) || [''];
 

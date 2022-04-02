@@ -92,7 +92,7 @@ export default function useContratacao() {
                     { shouldValidate: true }
                 );
             } else {
-                serviceForm.setValue('faxina.hora_inicio', '');
+                serviceForm.setValue('faxina.hora_termino', '');
             }
         },
         //eslint-disable-next-line
