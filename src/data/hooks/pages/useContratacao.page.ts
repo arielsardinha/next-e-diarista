@@ -53,36 +53,51 @@ export default function useContratacao() {
             }
             return {} as ServicoInterface;
         }, [servicos, dadosFaxina]),
-        tamanhoCasa = useMemo<string[]>(() => {
-            return listarComodos(dadosFaxina);
-        }, [tipoLimpeza, dadosFaxina]),
-        
-        totalPrice = useMemo<number>(() => {
-            return calcularPreco(dadosFaxina, tipoLimpeza);
-        }, [tipoLimpeza, dadosFaxina]),
-     
-        totalTime = useMemo<number>(() => {
-            return calcularTempoServico(dadosFaxina, tipoLimpeza);
-        }, [dadosFaxina, tipoLimpeza]);
+        { tamanhoCasa, totalPrice, totalTime } = useMemo<{
+            tamanhoCasa: string[];
+            totalPrice: number;
+            totalTime: number;
+        }>(
+            () => ({
+                tamanhoCasa: listarComodos(dadosFaxina),
+                totalPrice: calcularPreco(dadosFaxina, tipoLimpeza),
+                totalTime: calcularTempoServico(dadosFaxina, tipoLimpeza),
+            }),
+            //eslint-disable-next-line
+            [
+                tipoLimpeza,
+                dadosFaxina,
+                dadosFaxina?.quantidade_Quartos,
+                dadosFaxina?.quantidade_salas,
+                dadosFaxina?.quantidade_cozinhas,
+                dadosFaxina?.quantidade_banheiros,
+                dadosFaxina?.quantidade_quintais,
+                dadosFaxina?.quantidade_outros,
+            ]
+        );
 
-    useEffect(() => {
-        if (
-            dadosFaxina &&
-            ValidationService.hora(dadosFaxina.hora_inicio) &&
-            totalTime >= 0
-        ) {
-            serviceForm.setValue(
-                'faxina.hora_termino',
-                DateService.addHours(
-                    dadosFaxina?.hora_inicio as string,
-                    totalTime
-                ),
-                { shouldValidate: true }
-            );
-        } else {
-            serviceForm.setValue('faxina.hora_inicio', '');
-        }
-    }, [dadosFaxina?.hora_inicio, totalTime]);
+    useEffect(
+        () => {
+            if (
+                dadosFaxina &&
+                ValidationService.hora(dadosFaxina.hora_inicio) &&
+                totalTime >= 0
+            ) {
+                serviceForm.setValue(
+                    'faxina.hora_termino',
+                    DateService.addHours(
+                        dadosFaxina?.hora_inicio as string,
+                        totalTime
+                    ),
+                    { shouldValidate: true }
+                );
+            } else {
+                serviceForm.setValue('faxina.hora_inicio', '');
+            }
+        },
+        //eslint-disable-next-line
+        [dadosFaxina?.hora_inicio, totalTime]
+    );
 
     function onServiceFormSubmit(data: NovaDiariaFormDataInterface) {
         console.log(data);
@@ -151,6 +166,7 @@ export default function useContratacao() {
                 tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
             total += tipoLimpeza.valor_sala * dadosFaxina.quantidade_salas;
         }
+        
         return Math.max(total, tipoLimpeza.valor_minimo);
     }
 
