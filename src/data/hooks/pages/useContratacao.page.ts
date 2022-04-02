@@ -13,6 +13,7 @@ import useApi from '../useApi.hook';
 import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
+import { houseParts } from '@partials/encontrar-diarista/_detalhes-servico';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -52,6 +53,14 @@ export default function useContratacao() {
             }
             return {} as ServicoInterface;
         }, [servicos, dadosFaxina]),
+        tamanhoCasa = useMemo<string[]>(() => {
+            return listarComodos(dadosFaxina);
+        }, [tipoLimpeza, dadosFaxina]),
+        
+        totalPrice = useMemo<number>(() => {
+            return calcularPreco(dadosFaxina, tipoLimpeza);
+        }, [tipoLimpeza, dadosFaxina]),
+     
         totalTime = useMemo<number>(() => {
             return calcularTempoServico(dadosFaxina, tipoLimpeza);
         }, [dadosFaxina, tipoLimpeza]);
@@ -91,6 +100,23 @@ export default function useContratacao() {
         console.log(data);
     }
 
+    function listarComodos(dadosFaxina: DiariaInterface): string[] {
+        const comodos: string[] = [];
+        if (dadosFaxina) {
+            houseParts.forEach((housePart) => {
+                const total = dadosFaxina[
+                    housePart.name as keyof DiariaInterface
+                ] as number;
+                if (total > 0) {
+                    const nome =
+                        total > 1 ? housePart.plural : housePart.singular;
+                    comodos.push(`${total} ${nome}`);
+                }
+            });
+        }
+        return comodos;
+    }
+
     function calcularTempoServico(
         dadosFaxina: DiariaInterface,
         tipoLimpeza: ServicoInterface
@@ -101,13 +127,31 @@ export default function useContratacao() {
                 tipoLimpeza.horas_banheiro * dadosFaxina.quantidade_banheiros;
             total +=
                 tipoLimpeza.horas_cozinha * dadosFaxina.quantidade_cozinhas;
-            total += tipoLimpeza.horas_quarto * dadosFaxina.quantidade_quartos;
+            total += tipoLimpeza.horas_quarto * dadosFaxina.quantidade_Quartos;
             total +=
                 tipoLimpeza.horas_quintal * dadosFaxina.quantidade_quintais;
             total += tipoLimpeza.horas_sala * dadosFaxina.quantidade_salas;
-            total += tipoLimpeza.hora_outros * dadosFaxina.quantidade_outros;
+            total += tipoLimpeza.horas_outros * dadosFaxina.quantidade_outros;
         }
         return total;
+    }
+    function calcularPreco(
+        dadosFaxina: DiariaInterface,
+        tipoLimpeza: ServicoInterface
+    ) {
+        let total = 0;
+        if (dadosFaxina && tipoLimpeza) {
+            total +=
+                tipoLimpeza.valor_banheiro * dadosFaxina.quantidade_banheiros;
+            total +=
+                tipoLimpeza.valor_cozinha * dadosFaxina.quantidade_cozinhas;
+            total += tipoLimpeza.valor_outros * dadosFaxina.quantidade_outros;
+            total += tipoLimpeza.valor_quarto * dadosFaxina.quantidade_Quartos;
+            total +=
+                tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
+            total += tipoLimpeza.valor_sala * dadosFaxina.quantidade_salas;
+        }
+        return Math.max(total, tipoLimpeza.valor_minimo);
     }
 
     return {
@@ -127,5 +171,8 @@ export default function useContratacao() {
         setLoginError,
         onPaymentFormSubmit,
         paymentForm,
+        tamanhoCasa,
+        tipoLimpeza,
+        totalPrice,
     };
 }

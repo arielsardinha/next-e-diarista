@@ -135,7 +135,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                         <TextFieldMask
                             {...inputProps}
                             inputRef={ref}
-                            mask={'99/99/999'}
+                            mask={'99/99/9999'}
                             label={'Data'}
                             error={
                                 errors?.faxina?.data_atendimento !== undefined
@@ -146,6 +146,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                         />
                     )}
                 />
+
                 <Controller
                     name={'faxina.hora_inicio'}
                     defaultValue={''}
@@ -156,12 +157,8 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                             inputRef={ref}
                             mask={'99:99'}
                             label={'Hora Início'}
-                            error={
-                                errors?.faxina?.data_atendimento !== undefined
-                            }
-                            helperText={
-                                errors?.faxina?.data_atendimento?.message
-                            }
+                            error={errors?.faxina?.hora_inicio !== undefined}
+                            helperText={errors?.faxina?.hora_inicio?.message}
                         />
                     )}
                 />

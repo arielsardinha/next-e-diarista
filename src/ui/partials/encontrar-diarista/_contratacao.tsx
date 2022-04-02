@@ -20,6 +20,8 @@ import DetalhesServico from './_detalhes-servico';
 import CadastroClinte, { LoginCliente } from './_cadastro-clinte';
 import InformacoesPagamento from './_informacoes-pagamento';
 import Link from 'ui/components/navigation/Link/Link';
+import { TextFormatService } from 'data/services/TextFormatService';
+import DataList from 'ui/components/data-display/DataList/DataList';
 
 // import { Component } from './_contratacao.styled';
 
@@ -42,7 +44,11 @@ const Contratacao: React.FC = () => {
             setLoginError,
             onPaymentFormSubmit,
             paymentForm,
-        } = useContratacao();
+            tamanhoCasa,
+            tipoLimpeza,
+            totalPrice,
+        } = useContratacao(),
+        dataAtendimento = serviceForm.watch('faxina.data_atendimento');
 
     if (!servicos || servicos.length < 1) {
         return (
@@ -51,6 +57,7 @@ const Contratacao: React.FC = () => {
             </Container>
         );
     }
+
     return (
         <div>
             {!isMobile && <SafeEnvironment />}
@@ -58,6 +65,28 @@ const Contratacao: React.FC = () => {
                 selected={breadcrumItems[step - 1]}
                 items={breadcrumItems}
             />
+            {!isMobile && [2, 3].includes(step) && (
+                <DataList
+                    header={
+                        <Typography
+                            color={'primary'}
+                            sx={{ fontWeight: 'thin' }}
+                        >
+                            O valor total do serviço é:{' '}
+                            {TextFormatService.currency(totalPrice)}
+                        </Typography>
+                    }
+                    body={
+                        <>
+                            {tipoLimpeza?.nome}
+                            <br />
+                            Tamanho: {tamanhoCasa.join(', ')}
+                            <br />
+                            Data: {dataAtendimento}
+                        </>
+                    }
+                />
+            )}
             {step === 1 && (
                 <PageTitle title={'Nos conte um pouco sobre o serviço !'} />
             )}
@@ -189,22 +218,22 @@ const Contratacao: React.FC = () => {
                             items={[
                                 {
                                     title: 'Tipo',
-                                    description: [''],
+                                    description: [tipoLimpeza?.nome],
                                     icon: 'twf-check-circle',
                                 },
                                 {
                                     title: 'Tamanho',
-                                    description: [''],
+                                    description: tamanhoCasa,
                                     icon: 'twf-check-circle',
                                 },
                                 {
                                     title: 'Data',
-                                    description: [''],
+                                    description: [dataAtendimento as string],
                                     icon: 'twf-check-circle',
                                 },
                             ]}
                             footer={{
-                                text: 'R$80,00',
+                                text: TextFormatService.currency(totalPrice),
                                 icon: 'twf-check-circle',
                             }}
                         />

@@ -15,7 +15,7 @@ export interface DiariaInterface {
     numero: string;
     codigo_ibge: number;
 
-    quantidade_quartos: number;
+    quantidade_Quartos: number;
     quantidade_salas: number;
     quantidade_cozinhas: number;
     quantidade_banheiros: number;
