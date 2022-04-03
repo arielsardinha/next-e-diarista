@@ -23,6 +23,7 @@ import {
 import { UserContext } from 'data/contexts/UserContext';
 import { UserInterface } from 'data/@types/UserInterface';
 import { TextFormatService } from 'data/services/TextFormatService';
+import { LoginService } from 'data/services/LoginService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -146,11 +147,32 @@ export default function useContratacao() {
         }
     }
 
-    function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
-        console.log(data);
+    async function onLoginFormSubmit(data: { login: LoginFormDataInterface }) {
+        const loginSucess = await login(data.login);
+        if (loginSucess) {
+            const user = await LoginService.getUser();
+            if (user) {
+                criarDiaria(user);
+
+                setStep(3);
+            }
+        }
     }
 
-    function onLoginFormSubmit(data: LoginFormDataInterface) {
+    async function login(
+        credentials: LoginFormDataInterface
+    ): Promise<boolean> {
+        const loginSucess = await LoginService.login(credentials);
+        if (loginSucess) {
+            const user = await LoginService.getUser();
+            userDispatch({ type: 'SET_USER', payload: user });
+        } else {
+            setLoginError('E-mail e/ou Senha inválidos');
+        }
+        return loginSucess;
+    }
+
+    function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
         console.log(data);
     }
 
