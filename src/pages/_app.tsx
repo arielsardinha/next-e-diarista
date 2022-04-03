@@ -1,18 +1,35 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import '@styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { ThemeProvider } from '@material-ui/core';
+import { CircularProgress, Container, ThemeProvider } from '@material-ui/core';
 import theme from 'ui/themes/theme';
 import Header from 'ui/components/surfaces/Header/Header';
 import Footer from 'ui/components/surfaces/Footer/Footer';
 import { AppContainer } from '@styles/pages/_app.styled';
 import { MainProvider } from 'data/contexts/MainContext';
 
+import { UserContext } from 'data/contexts/UserContext';
+import useRouterGuard, { privateRoutes } from 'data/hooks/useRouterGuard.hook';
+
 function App({ Component, pageProps }: AppProps) {
+    const { userState } = useContext(UserContext);
+    const router = useRouterGuard(userState.user, userState.isLogging);
+
     useEffect(() => {
         document.querySelector('#jss-server-side')?.remove();
     }, []);
+
+    function canShow(): boolean {
+        if (privateRoutes.includes(router.pathname)) {
+            if (userState.isLogging) {
+                return false;
+            } else {
+                return userState.user.nome_completo.length > 0;
+            }
+        }
+        return true;
+    }
 
     return (
         <>
@@ -25,7 +42,13 @@ function App({ Component, pageProps }: AppProps) {
                 <AppContainer>
                     <Header />
                     <main>
-                        <Component {...pageProps} />
+                        {canShow() ? (
+                            <Component {...pageProps} />
+                        ) : (
+                            <Container sx={{ textAlign: 'center', my: 10 }}>
+                                <CircularProgress />
+                            </Container>
+                        )}
                     </main>
                     <Footer />
                 </AppContainer>
