@@ -26,16 +26,17 @@ import { TextFormatService } from 'data/services/TextFormatService';
 import { LoginService } from 'data/services/LoginService';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { UserService } from 'data/services/UserService';
+import { PaymentService } from 'data/services/PaymentService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
         [hasLogin, setHasLogin] = useState(false),
         [loginError, setLoginError] = useState(''),
-        breadcrumItems = ['Detalhes da diária', 'Idntificação', 'Pagamento'],
+        breadcrumbItems = ['Detalhes da diária', 'Idntificação', 'Pagamento'],
         serviceForm = useForm<NovaDiariaFormDataInterface>({
             resolver: yupResolver(
                 FormSchemaService.address().concat(
-                    FormSchemaService.detalheServico()
+                    FormSchemaService.detalhesServico()
                 )
             ),
         }),
@@ -150,12 +151,11 @@ export default function useContratacao() {
     }
 
     async function onLoginFormSubmit(data: { login: LoginFormDataInterface }) {
-        const loginSucess = await login(data.login);
-        if (loginSucess) {
+        const loginSuccess = await login(data.login);
+        if (loginSuccess) {
             const user = await LoginService.getUser();
             if (user) {
                 criarDiaria(user);
-
                 setStep(3);
             }
         }
@@ -165,8 +165,8 @@ export default function useContratacao() {
         credentials: LoginFormDataInterface,
         user?: UserInterface
     ): Promise<boolean> {
-        const loginSucess = await LoginService.login(credentials);
-        if (loginSucess) {
+        const loginSuccess = await LoginService.login(credentials);
+        if (loginSuccess) {
             if (!user) {
                 user = await LoginService.getUser();
             }
@@ -174,23 +174,19 @@ export default function useContratacao() {
         } else {
             setLoginError('E-mail e/ou Senha inválidos');
         }
-        return loginSucess;
+        return loginSuccess;
     }
 
-    async function onClientFormSubmit(
-        data: CadastroClienteFormDataInterface,
-        link: ApiLinksInterface
-    ) {
-        const newUserLinks = linksResolver(
+    async function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
+        const newUserlink = linksResolver(
             externalServicesState.externalServices,
             'cadastrar_usuario'
         );
-
-        if (newUserLinks) {
+        if (newUserlink) {
             try {
-                await cadastrarUsuario(data, newUserLinks);
+                await cadastrarUsuario(data, newUserlink);
             } catch (error) {
-                UserService.hendleNewUserError(error, clientForm);
+                UserService.handleNewUserError(error, clientForm);
             }
         }
     }
@@ -205,21 +201,41 @@ export default function useContratacao() {
             link
         );
         if (newUser) {
-            const loginSucess = await login(
+            const loginSuccess = await login(
                 {
                     email: data.usuario.email,
                     password: data.usuario.password || '',
                 },
                 newUser
             );
-            if (loginSucess) {
+            if (loginSuccess) {
                 criarDiaria(newUser);
             }
         }
     }
 
-    function onPaymentFormSubmit(data: PagamentoFormDataInterface) {
-        console.log(data);
+    async function onPaymentFormSubmit(data: {
+        pagamento: PagamentoFormDataInterface;
+    }) {
+        const cartao = {
+            card_number: data.pagamento.nome_cartao.replaceAll('', ''),
+            card_holder_name: data.pagamento.nome_cartao,
+            card_cvv: data.pagamento.codigo,
+            card_expiration_date: data.pagamento.validade,
+        };
+        const hash = await PaymentService.getHash(cartao);
+
+        ApiServiceHateoas(novaDiaria.links, 'pagar_diaria', async (request) => {
+            try {
+                await request({ data: { card_hash: hash } });
+                setStep(4);
+            } catch (error) {
+                paymentForm.setError('pagamento_recusado', {
+                    type: 'manual',
+                    message: 'Pagamento recusado',
+                });
+            }
+        });
     }
 
     function listarComodos(dadosFaxina: DiariaInterface): string[] {
@@ -290,17 +306,18 @@ export default function useContratacao() {
                                 data: {
                                     ...serviceData.endereco,
                                     ...serviceData.faxina,
-                                    cep: TextFormatService.getNumberFromText(
+                                    cep: TextFormatService.getNumbersFromText(
                                         serviceData.endereco.cep
                                     ),
                                     preco: totalPrice,
-                                    tempo_atendimento:
+                                    tempo_atendimento: totalTime,
+                                    data_atendimento:
                                         TextFormatService.reverseDate(
-                                            (serviceData.faxina
-                                                .data_atendimento as string) +
-                                                'T' +
-                                                serviceData.faxina.hora_inicio
-                                        ),
+                                            serviceData.faxina
+                                                .data_atendimento as string
+                                        ) +
+                                        'T' +
+                                        serviceData.faxina.hora_inicio,
                                 },
                             })
                         ).data;
@@ -318,7 +335,7 @@ export default function useContratacao() {
     return {
         step,
         setStep,
-        breadcrumItems,
+        breadcrumbItems,
         serviceForm,
         onServiceFormSubmit,
         clientForm,

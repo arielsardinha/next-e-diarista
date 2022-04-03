@@ -17,7 +17,13 @@ import TextFieldMask from 'ui/components/inputs/TextFieldMask/TextFieldMask';
 import UserInformation from 'ui/components/data-display/UserInformation/UserInformation';
 import useVerificarProfissionais from 'data/hooks/pages/useVerificarProfissionais.page';
 
-const VerificarProfissionais: React.FC = () => {
+interface VerificarProfissionaisProps {
+    onContratarProfissional: () => void;
+}
+
+const VerificarProfissionais: React.FC<VerificarProfissionaisProps> = (
+    props
+) => {
     const {
         cep,
         setCep,
@@ -93,6 +99,7 @@ const VerificarProfissionais: React.FC = () => {
                                     variant={'contained'}
                                     color={'secondary'}
                                     sx={{ mt: 5 }}
+                                    onClick={props.onContratarProfissional}
                                 >
                                     Contratar um(a) profissional
                                 </Button>

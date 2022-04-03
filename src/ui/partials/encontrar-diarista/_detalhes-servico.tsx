@@ -15,13 +15,14 @@ import ToggleButtonGroup, {
 import ItemCounter from 'ui/components/inputs/ItemCounter/ItemCounter';
 
 import { ItemsContainer } from './_detalhes-servico.styled';
-import TextFieldMaskStories from 'ui/components/inputs/TextFieldMask/TextFieldMask.stories';
 import TextFieldMask from 'ui/components/inputs/TextFieldMask/TextFieldMask';
 import { TextFieldStyled } from 'ui/components/inputs/TextField/TextField.style';
+import TextField from 'ui/components/inputs/TextField/TextField';
+
 interface DetalhesServicoProps {
     servicos?: ServicoInterface[];
-    podemosAtender?: boolean;
     comodos?: number;
+    podemosAtender?: boolean;
 }
 
 export const houseParts = [
@@ -30,31 +31,19 @@ export const houseParts = [
         plural: 'Cozinhas',
         name: 'quantidade_cozinhas',
     },
-    {
-        singular: 'Sala',
-        plural: 'Salas',
-        name: 'quantidade_salas',
-    },
+    { singular: 'Sala', plural: 'Salas', name: 'quantidade_salas' },
     {
         singular: 'Banheiro',
         plural: 'Banheiros',
         name: 'quantidade_banheiros',
     },
-    {
-        singular: 'Quarto',
-        plural: 'Quartos',
-        name: 'quantidade_Quartos',
-    },
+    { singular: 'Quarto', plural: 'Quartos', name: 'quantidade_quartos' },
     {
         singular: 'Quintal',
         plural: 'Quintais',
         name: 'quantidade_quintais',
     },
-    {
-        singular: 'Outros',
-        plural: 'Outros',
-        name: 'quantidade_outros',
-    },
+    { singular: 'Outros', plural: 'Outros', name: 'quantidade_outros' },
 ];
 
 const DetalhesServico: React.FC<DetalhesServicoProps> = ({
@@ -67,10 +56,11 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
         control,
         formState: { errors },
     } = useFormContext();
+
     return (
         <>
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
-                Qual tipo de limpeza você precisa ?
+                Qual tipo de limpeza você precisa?
             </Typography>
             <Controller
                 name={'faxina.servico'}
@@ -97,10 +87,13 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                     </ToggleButtonGroup>
                 )}
             />
+
             <Divider sx={{ my: 5 }} />
+
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
-                Qual o tamanho da sua casa ?
+                Qual o tamanho da sua casa?
             </Typography>
+
             <ItemsContainer>
                 {houseParts.map((item) => (
                     <Controller
@@ -122,10 +115,13 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                     />
                 ))}
             </ItemsContainer>
+
             <Divider sx={{ my: 5 }} />
+
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
-                Qual data você gostaria de receber o/a diarista ?
+                Qual a data você gostaria de receber a/o diarista?
             </Typography>
+
             <ItemsContainer>
                 <Controller
                     name={'faxina.data_atendimento'}
@@ -162,64 +158,71 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                         />
                     )}
                 />
+
                 <Controller
                     name={'faxina.hora_termino'}
                     defaultValue={''}
                     control={control}
                     render={({ field: { ref, ...inputProps } }) => (
-                        <Tooltip title={'Campo automático'}>
+                        <Tooltip title={'Campo Automático'}>
                             <div>
                                 <TextFieldMask
-                                    fullWidth
                                     {...inputProps}
                                     inputRef={ref}
                                     mask={'99:99'}
                                     inputProps={{
                                         readOnly: true,
-                                        disable: true,
+                                        disabled: true,
                                     }}
                                     label={'Hora Término'}
                                     error={
-                                        errors?.faxina?.data_atendimento !==
+                                        errors?.faxina?.hora_termino !==
                                         undefined
                                     }
                                     helperText={
-                                        errors?.faxina?.data_atendimento
-                                            ?.message
+                                        errors?.faxina?.hora_termino?.message
                                     }
+                                    fullWidth
                                 />
                             </div>
                         </Tooltip>
                     )}
                 />
             </ItemsContainer>
+
             <Divider sx={{ my: 5 }} />
 
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
-                Obervações
+                Observações
             </Typography>
-            <TextFieldStyled
-                label={'Quer acrescentar algum detalhe ?'}
+
+            <TextField
+                label={'Quer acrescentar algum detalhe?'}
                 {...register('faxina.observacoes')}
+                required={false}
                 fullWidth
                 multiline
             />
+
             <Divider sx={{ my: 5 }} />
+
             <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
-                Qual endereço será realizado a limpeza ?
+                Qual endereço onde será realizada a limpeza?
             </Typography>
             <AddressForm />
+
             {!podemosAtender && (
                 <Typography color={'error'} sx={{ pb: 2 }} align={'center'}>
-                    Infelizmnte ainda não atendemos na sua região
+                    Infelizmente ainda não atendemos na sua região
                 </Typography>
             )}
+
             <Container sx={{ textAlign: 'right' }}>
                 <Button
                     variant={'contained'}
                     color={'secondary'}
+                    disabled={comodos === 0 || !podemosAtender}
                     type={'submit'}
-                    disabled={comodos == 0 || !podemosAtender}
                 >
                     Ir para identificação
                 </Button>

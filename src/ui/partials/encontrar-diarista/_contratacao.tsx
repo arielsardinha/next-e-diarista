@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 import {
     Box,
@@ -22,6 +22,7 @@ import InformacoesPagamento from './_informacoes-pagamento';
 import Link from 'ui/components/navigation/Link/Link';
 import { TextFormatService } from 'data/services/TextFormatService';
 import DataList from 'ui/components/data-display/DataList/DataList';
+import { BrowserService } from 'data/services/BrowserService';
 
 // import { Component } from './_contratacao.styled';
 
@@ -30,26 +31,29 @@ const Contratacao: React.FC = () => {
         {
             step,
             setStep,
-            breadcrumItems,
+            breadcrumbItems,
+            tipoLimpeza,
+            totalPrice,
+            tamanhoCasa,
+            podemosAtender,
             serviceForm,
+            clientForm,
+            paymentForm,
+            loginForm,
             onServiceFormSubmit,
+            onClientFormSubmit,
+            onLoginFormSubmit,
+            onPaymentFormSubmit,
             servicos,
             hasLogin,
             setHasLogin,
-            clientForm,
-            onClientFormSubmit,
-            loginForm,
-            onLoginFormSubmit,
             loginError,
-            setLoginError,
-            onPaymentFormSubmit,
-            paymentForm,
-            tamanhoCasa,
-            tipoLimpeza,
-            totalPrice,
-            podemosAtender,
         } = useContratacao(),
         dataAtendimento = serviceForm.watch('faxina.data_atendimento');
+
+    useEffect(() => {
+        BrowserService.scrollToTop();
+    }, [step]);
 
     if (!servicos || servicos.length < 1) {
         return (
@@ -63,10 +67,11 @@ const Contratacao: React.FC = () => {
         <div>
             {!isMobile && <SafeEnvironment />}
             <Breadcrumb
-                selected={breadcrumItems[step - 1]}
-                items={breadcrumItems}
+                selected={breadcrumbItems[step - 1]}
+                items={breadcrumbItems}
             />
-            {!isMobile && [2, 3].includes(step) && (
+
+            {isMobile && [2, 3].includes(step) && (
                 <DataList
                     header={
                         <Typography
@@ -88,12 +93,14 @@ const Contratacao: React.FC = () => {
                     }
                 />
             )}
+
             {step === 1 && (
-                <PageTitle title={'Nos conte um pouco sobre o serviço !'} />
+                <PageTitle title={'Nos conte um pouco sobre o serviço!'} />
             )}
+
             {step === 2 && (
                 <PageTitle
-                    title={'Precisamos conhecer um pouco sobre você !'}
+                    title={'Precisamos conhecer um pouco sobre você!'}
                     subtitle={
                         !hasLogin ? (
                             <span>
@@ -113,6 +120,16 @@ const Contratacao: React.FC = () => {
                     }
                 />
             )}
+
+            {step === 3 && (
+                <PageTitle
+                    title={'Informe os dados do cartão para pagamento'}
+                    subtitle={
+                        'Será feita uma reserva, mas o valor só será descontado quando você confirmar a presença do/da diarista'
+                    }
+                />
+            )}
+
             <UserFormContainer>
                 <PageFormContainer fullWidth={step === 4}>
                     <Paper sx={{ p: 4 }}>
@@ -121,7 +138,7 @@ const Contratacao: React.FC = () => {
                                 onSubmit={serviceForm.handleSubmit(
                                     onServiceFormSubmit
                                 )}
-                                hidden={step != 1}
+                                hidden={step !== 1}
                             >
                                 <DetalhesServico
                                     servicos={servicos}
@@ -130,17 +147,8 @@ const Contratacao: React.FC = () => {
                                 />
                             </form>
                         </FormProvider>
-                        <FormProvider {...clientForm}>
-                            <form
-                                onSubmit={clientForm.handleSubmit(
-                                    onClientFormSubmit
-                                )}
-                                hidden={step != 2 || hasLogin}
-                            >
-                                <CadastroClinte onBack={() => setStep(1)} />
-                            </form>
-                        </FormProvider>
-                        {step == 2 && hasLogin && (
+
+                        {step === 2 && hasLogin && (
                             <FormProvider {...loginForm}>
                                 <form
                                     onSubmit={loginForm.handleSubmit(
@@ -153,7 +161,7 @@ const Contratacao: React.FC = () => {
                                             align={'center'}
                                             sx={{ mb: 2 }}
                                         >
-                                            {loginError}dwadadad
+                                            {loginError}
                                         </Typography>
                                     )}
                                     <LoginCliente onBack={() => setStep(1)} />
@@ -161,8 +169,19 @@ const Contratacao: React.FC = () => {
                             </FormProvider>
                         )}
 
-                        {step == 3 && (
-                            <FormProvider {...clientForm}>
+                        <FormProvider {...clientForm}>
+                            <form
+                                onSubmit={clientForm.handleSubmit(
+                                    onClientFormSubmit
+                                )}
+                                hidden={step !== 2 || hasLogin}
+                            >
+                                <CadastroClinte onBack={() => setStep(1)} />
+                            </form>
+                        </FormProvider>
+
+                        {step === 3 && (
+                            <FormProvider {...paymentForm}>
                                 <form
                                     onSubmit={paymentForm.handleSubmit(
                                         onPaymentFormSubmit
@@ -172,7 +191,8 @@ const Contratacao: React.FC = () => {
                                 </form>
                             </FormProvider>
                         )}
-                        {step == 4 && (
+
+                        {step === 4 && (
                             <Box sx={{ textAlign: 'center' }}>
                                 <Typography
                                     color={'secondary'}
@@ -184,16 +204,16 @@ const Contratacao: React.FC = () => {
                                     color={'secondary'}
                                     sx={{ fontSize: '22px', pb: 3 }}
                                 >
-                                    Pagamento realizado com sucesso !
+                                    Pagamento realizado com sucesso!
                                 </Typography>
                                 <Typography
-                                    variant={'body2'}
-                                    color={'textSecondary'}
                                     sx={{
                                         maxWidth: '410px',
                                         mb: 3,
                                         mx: 'auto',
                                     }}
+                                    variant={'body2'}
+                                    color={'textSecondary'}
                                 >
                                     Sua diária foi paga com sucesso! Já estamos
                                     procurando o(a) melhor profissional para
@@ -204,6 +224,7 @@ const Contratacao: React.FC = () => {
                                     a sua diária sem nenhuma multa até 24 horas
                                     antes da hora do agendamento.
                                 </Typography>
+
                                 <Link
                                     href={'/diarias'}
                                     Component={Button}
@@ -217,6 +238,7 @@ const Contratacao: React.FC = () => {
                             </Box>
                         )}
                     </Paper>
+
                     {!isMobile && step !== 4 && (
                         <SideInformation
                             title={'Detalhes'}
@@ -239,7 +261,7 @@ const Contratacao: React.FC = () => {
                             ]}
                             footer={{
                                 text: TextFormatService.currency(totalPrice),
-                                icon: 'twf-check-circle',
+                                icon: 'twf-credit-card',
                             }}
                         />
                     )}

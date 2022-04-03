@@ -29,7 +29,7 @@ export const TextFormatService = {
         return time.substring(0, 10);
     },
 
-    getNumberFromText(text: string = ''): string {
+    getNumbersFromText(text: string = ''): string {
         return text.replace(/\D/g, '');
     },
 };

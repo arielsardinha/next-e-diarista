@@ -15,8 +15,8 @@ export const UserService = {
         const nascimento = TextFormatService.dataToString(
                 user.nascimento as Date
             ),
-            cpf = TextFormatService.getNumberFromText(user.cpf),
-            telefone = TextFormatService.getNumberFromText(user.telefone);
+            cpf = TextFormatService.getNumbersFromText(user.cpf),
+            telefone = TextFormatService.getNumbersFromText(user.telefone);
 
         /**
          * json não possui suporte para arquivosm somente formData;
@@ -39,7 +39,7 @@ export const UserService = {
         return response.data;
     },
 
-    hendleNewUserError<T>(error: any, form: UseFormReturn<T>): void {
+    handleNewUserError<T>(error: any, form: UseFormReturn<T>): void {
         const errorList = error?.response?.data;
 
         if (errorList) {

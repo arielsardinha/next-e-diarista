@@ -1,3 +1,6 @@
+import { ApiLinksInterface } from './ApiLinksInterface';
+import { UserInterface } from './UserInterface';
+
 export interface DiariaInterface {
     id?: number;
     data_atendimento: string | Date;
@@ -25,4 +28,7 @@ export interface DiariaInterface {
     observacoes?: string;
     servico: number;
     nome_servico: string;
+
+    links?: ApiLinksInterface[];
+    cliente?: UserInterface;
 }
