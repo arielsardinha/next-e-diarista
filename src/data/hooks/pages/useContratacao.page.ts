@@ -21,9 +21,11 @@ import {
     linksResolver,
 } from 'data/services/ApiService';
 import { UserContext } from 'data/contexts/UserContext';
-import { UserInterface } from 'data/@types/UserInterface';
+import { UserInterface, UserType } from 'data/@types/UserInterface';
 import { TextFormatService } from 'data/services/TextFormatService';
 import { LoginService } from 'data/services/LoginService';
+import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
+import { UserService } from 'data/services/UserService';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -160,11 +162,14 @@ export default function useContratacao() {
     }
 
     async function login(
-        credentials: LoginFormDataInterface
+        credentials: LoginFormDataInterface,
+        user?: UserInterface
     ): Promise<boolean> {
         const loginSucess = await LoginService.login(credentials);
         if (loginSucess) {
-            const user = await LoginService.getUser();
+            if (!user) {
+                user = await LoginService.getUser();
+            }
             userDispatch({ type: 'SET_USER', payload: user });
         } else {
             setLoginError('E-mail e/ou Senha inválidos');
@@ -172,8 +177,45 @@ export default function useContratacao() {
         return loginSucess;
     }
 
-    function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
-        console.log(data);
+    async function onClientFormSubmit(
+        data: CadastroClienteFormDataInterface,
+        link: ApiLinksInterface
+    ) {
+        const newUserLinks = linksResolver(
+            externalServicesState.externalServices,
+            'cadastrar_usuario'
+        );
+
+        if (newUserLinks) {
+            try {
+                await cadastrarUsuario(data, newUserLinks);
+            } catch (error) {
+                UserService.hendleNewUserError(error, clientForm);
+            }
+        }
+    }
+
+    async function cadastrarUsuario(
+        data: CadastroClienteFormDataInterface,
+        link: ApiLinksInterface
+    ) {
+        const newUser = await UserService.cadastrar(
+            data.usuario,
+            UserType.Cliente,
+            link
+        );
+        if (newUser) {
+            const loginSucess = await login(
+                {
+                    email: data.usuario.email,
+                    password: data.usuario.password || '',
+                },
+                newUser
+            );
+            if (loginSucess) {
+                criarDiaria(newUser);
+            }
+        }
     }
 
     function onPaymentFormSubmit(data: PagamentoFormDataInterface) {

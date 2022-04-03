@@ -5,7 +5,7 @@ import { ApiService } from './ApiService';
 import { ObjectService } from './ObjectService';
 import { TextFormatService } from './TextFormatService';
 
-export const UserCervice = {
+export const UserService = {
     async cadastrar(
         user: UserInterface,
         userType: UserType,
