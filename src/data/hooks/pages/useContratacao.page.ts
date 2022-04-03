@@ -66,14 +66,14 @@ export default function useContratacao() {
         tipoLimpeza = useMemo<ServicoInterface>(() => {
             if (servicos && dadosFaxina?.servico) {
                 const selectedService = servicos.find(
-                    (service) => service.id === dadosFaxina.servico
+                    (servico) => servico.id === dadosFaxina.servico
                 );
                 if (selectedService) {
                     return selectedService;
                 }
             }
             return {} as ServicoInterface;
-        }, [servicos, dadosFaxina]),
+        }, [servicos, dadosFaxina?.servico]),
         { tamanhoCasa, totalPrice, totalTime } = useMemo<{
             tamanhoCasa: string[];
             totalPrice: number;
@@ -97,21 +97,21 @@ export default function useContratacao() {
             ]
         );
     useEffect(() => {
-        const cep = ((cepFaxina as string) || '')?.replace(/\D/g, '');
+        const cep = ((cepFaxina as string) || '').replace(/\D/g, '');
         if (ValidationService.cep(cep)) {
             ApiServiceHateoas(
                 externalServicesState.externalServices,
                 'verificar_disponibilidade_atendimento',
                 (request) => {
                     request<{ disponibilidade: boolean }>({
-                        params: { cep },
+                        params: {
+                            cep,
+                        },
                     })
                         .then((response) => {
                             setPodemosAtender(response.data.disponibilidade);
                         })
-                        .catch((_error) => {
-                            setPodemosAtender(false);
-                        });
+                        .catch((_error) => setPodemosAtender(false));
                 }
             );
         } else {
