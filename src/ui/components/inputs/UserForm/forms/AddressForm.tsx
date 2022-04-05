@@ -18,6 +18,8 @@ export const AddressForm = () => {
         user,
     } = useAddressForm();
 
+    
+
     return (
         <AddressData>
             <Controller
@@ -36,7 +38,6 @@ export const AddressForm = () => {
                     />
                 )}
             />
-
             <Controller
                 name={'endereco.estado'}
                 defaultValue={userAddress.estado}
@@ -51,7 +52,7 @@ export const AddressForm = () => {
                             <em>None</em>
                         </MenuItem>
                         {estados.map((estado) => (
-                            <MenuItem key={estado.sigla} value={estado.sigla}>
+                            <MenuItem key={estado.uf} value={estado.uf}>
                                 {estado.nome}
                             </MenuItem>
                         ))}

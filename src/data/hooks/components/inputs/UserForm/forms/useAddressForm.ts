@@ -5,8 +5,8 @@ import { useMemo, useEffect, useContext } from 'react';
 import { UserContext } from 'data/contexts/UserContext';
 
 export default function useAddressForm() {
-    const { userAddress, user } = useContext(UserContext).userState;
-    const {
+    const { userAddress, user } = useContext(UserContext).userState,
+        {
             register,
             control,
             watch,
@@ -60,6 +60,8 @@ export default function useAddressForm() {
     }, [addressCep]);
 
     return {
+        userAddress,
+        user,
         control,
         errors,
         estados,
@@ -68,7 +70,5 @@ export default function useAddressForm() {
         addressCity,
         addressCep,
         register,
-        userAddress,
-        user,
     };
 }

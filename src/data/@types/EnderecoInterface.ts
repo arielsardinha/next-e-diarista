@@ -14,7 +14,7 @@ export interface EnderecoInterface {
 
 export interface EstadoInterface {
     nome: string;
-    sigla: string;
+    uf: string;
 }
 
 export interface CidadeInterface {
