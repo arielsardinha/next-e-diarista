@@ -7,15 +7,15 @@ export const LoginService = {
     async login(credentials: LoginFormDataInterface): Promise<boolean> {
         try {
             const { data } = await ApiService.post<{
-                acess: string;
-                refrash: string;
+                access: string;
+                refresh: string;
             }>('/auth/token/', credentials);
-
-            LocalStorage.set('token', data.acess);
-            LocalStorage.set('token_refresh', data.refrash);
+                
+            LocalStorage.set('token', data.access);
+            LocalStorage.set('token_refresh', data.refresh);
             ApiService.defaults.headers[
                 'Authorization'
-            ] = `Bearer ${data.acess}`;
+            ] = `Bearer ${data.access}`;
             return true;
         } catch (error) {
             return false;
