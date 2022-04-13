@@ -22,6 +22,7 @@ import UserProfileAvatar from 'ui/components/data-display/UserProfileAvatar/User
 
 export interface HeaderProps {
     user: UserInterface;
+    onLogout?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = (props) => {
@@ -90,7 +91,7 @@ const HeaderDesktop: React.FC<HeaderProps> = (props) => {
                         onClick={() => setIsMenuOpen(true)}
                         onMenuClick={() => setIsMenuOpen(false)}
                         onMenuClose={() => setIsMenuOpen(false)}
-                        onLogout={() => {}}
+                        onLogout={props.onLogout}
                     />
                 ) : (
                     <ButtonsContainer>
@@ -180,6 +181,13 @@ const HeaderMobile: React.FC<HeaderProps> = (props) => {
                                     Component={MenuItem}
                                 >
                                     Alterar dados
+                                </Link>
+                                <Link
+                                    href={''}
+                                    onClick={props.onLogout}
+                                    Component={MenuItem}
+                                >
+                                    Sair
                                 </Link>
                             </MenuList>
                         </>
