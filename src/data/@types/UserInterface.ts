@@ -1,4 +1,4 @@
-import { ApiLinksInterface } from "./ApiLinksInterface";
+import { ApiLinksInterface } from './ApiLinksInterface';
 
 export interface UserInterface {
     id?: number;
@@ -20,6 +20,8 @@ export interface UserInterface {
         refresh: string;
     };
     links?: ApiLinksInterface[];
+
+    reputacao: number;
 }
 
 export interface UserShortInformationInterface {
