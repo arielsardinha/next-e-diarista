@@ -1,14 +1,14 @@
 import React from 'react';
 // import { } from '@material-ui/core';
 import {
-    TableStyle,
-    TableContainerStyle,
-    TableHeadStyle,
-    TableRowStyle,
-    TableCellStyle,
-    TableBodyStyle,
-    TablePaginationStyle,
     TablePaper,
+    TableStyled,
+    TableContainerStyled,
+    TableHeadStyled,
+    TableRowStyled,
+    TableCellStyled,
+    TableBodyStyled,
+    TablePaginationStyled,
 } from './Table.style';
 
 export interface TableProps<T> {
@@ -24,27 +24,27 @@ export type TableComponentType = <T>(
 const Table: TableComponentType = (props) => {
     return (
         <TablePaper>
-            <TableContainerStyle>
-                <TableStyle>
-                    <TableHeadStyle>
-                        <TableRowStyle>
-                            {props.header.map((title, index) => {
-                                <TableCellStyle key={index}>
+            <TableContainerStyled>
+                <TableStyled>
+                    <TableHeadStyled>
+                        <TableRowStyled>
+                            {props.header.map((title, index) => (
+                                <TableCellStyled key={index}>
                                     {title}
-                                </TableCellStyle>;
-                            })}
-                        </TableRowStyle>
-                    </TableHeadStyle>
-                    <TableBodyStyle>
+                                </TableCellStyled>
+                            ))}
+                        </TableRowStyled>
+                    </TableHeadStyled>
+                    <TableBodyStyled>
                         {props.data.map(props.rowElement)}
-                    </TableBodyStyle>
-                </TableStyle>
-            </TableContainerStyle>
+                    </TableBodyStyled>
+                </TableStyled>
+            </TableContainerStyled>
         </TablePaper>
     );
 };
 
 export default Table;
-export const TableRow = TableRowStyle;
-export const TableCell = TableCellStyle;
-export const TablePagination = TablePaginationStyle;
+export const TableRow = TableRowStyled;
+export const TableCell = TableCellStyled;
+export const TablePagination = TablePaginationStyled;
