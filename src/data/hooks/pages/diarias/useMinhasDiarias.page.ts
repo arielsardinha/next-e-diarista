@@ -7,10 +7,12 @@ export default function useMinhasDiarias() {
     const isMobile = useIsMobile(),
         { diariasState } = useContext(DiariaContext),
         { diarias } = diariasState,
+        filterdData = diarias,
         { currentPage, setCurrentPage, totalPages, itemsPorPage } =
             usePagination(diarias, 5);
 
     return {
+        filterdData,
         isMobile,
         currentPage,
         setCurrentPage,
