@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 // import { } from '@material-ui/core';
 import {
     TablePaper,
@@ -15,13 +15,29 @@ export interface TableProps<T> {
     header: string[];
     data: T[];
     rowElement: (item: T, index: number) => React.ReactNode;
+    itemsPorPage?: number;
+    currentPage?: number;
 }
 
 export type TableComponentType = <T>(
     props: TableProps<T>
 ) => React.ReactElement;
 
-const Table: TableComponentType = (props) => {
+const Table: TableComponentType = ({
+    data,
+    itemsPorPage,
+    currentPage,
+    ...props
+}) => {
+    const tableData = useMemo<typeof data>(() => {
+        if (itemsPorPage !== undefined && currentPage !== undefined) {
+            return data.slice(
+                (currentPage - 1) * itemsPorPage,
+                (currentPage - 1) * itemsPorPage + itemsPorPage
+            );
+        }
+        return data;
+    }, [data, itemsPorPage, currentPage]);
     return (
         <TablePaper>
             <TableContainerStyled>
@@ -36,7 +52,7 @@ const Table: TableComponentType = (props) => {
                         </TableRowStyled>
                     </TableHeadStyled>
                     <TableBodyStyled>
-                        {props.data.map(props.rowElement)}
+                        {tableData.map(props.rowElement)}
                     </TableBodyStyled>
                 </TableStyled>
             </TableContainerStyled>

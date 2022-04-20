@@ -6,7 +6,8 @@ import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 // import { Component } from './_minhas-diarias.styled';
 
 const MinhasDiarias: React.FC = () => {
-    const { isMobile } = useMinhasDiarias();
+    const { isMobile, currentPage, setCurrentPage, totalPages, itemsPorPage } =
+        useMinhasDiarias();
     return (
         <>
             <Container>
