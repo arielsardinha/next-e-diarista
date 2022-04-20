@@ -1,4 +1,4 @@
-import { Container, Typography } from '@material-ui/core';
+import { Button, Container, Typography } from '@material-ui/core';
 import { DiariaStatus } from 'data/@types/DiariaInterface';
 import useMinhasDiarias from 'data/hooks/pages/diarias/useMinhasDiarias.page';
 import { DiariaService } from 'data/services/DiariaService';
@@ -12,6 +12,7 @@ import Table, {
     TablePagination,
     TableRow,
 } from 'ui/components/data-display/Table/Table';
+import Link from 'ui/components/navigation/Link/Link';
 
 // import { Component } from './_minhas-diarias.styled';
 
@@ -23,6 +24,7 @@ const MinhasDiarias: React.FC = () => {
         totalPages,
         itemsPorPage,
         filterdData,
+        podeVisualizar,
     } = useMinhasDiarias();
     return (
         <>
@@ -56,6 +58,20 @@ const MinhasDiarias: React.FC = () => {
                                             Valor:{' '}
                                             {TextFormatService.currency(
                                                 item.preco
+                                            )}
+                                        </>
+                                    }
+                                    actions={
+                                        <>
+                                            {podeVisualizar(item) && (
+                                                <Button
+                                                    component={Link}
+                                                    href={`?id=${item.id}`}
+                                                    color={'inherit'}
+                                                    variant={'outlined'}
+                                                >
+                                                    Detalhes
+                                                </Button>
                                             )}
                                         </>
                                     }
@@ -106,6 +122,13 @@ const MinhasDiarias: React.FC = () => {
                                         <TableCell>
                                             {TextFormatService.currency(
                                                 item.preco
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {podeVisualizar(item) && (
+                                                <Link href={`?id=${item.id}`}>
+                                                    Detalhes
+                                                </Link>
                                             )}
                                         </TableCell>
                                     </TableRow>
