@@ -6,6 +6,7 @@ import { TextFormatService } from 'data/services/TextFormatService';
 import React from 'react';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import Status from 'ui/components/data-display/Status/Status';
+import DataList from 'ui/components/data-display/DataList/DataList';
 import Table, {
     TableCell,
     TablePagination,
@@ -25,11 +26,42 @@ const MinhasDiarias: React.FC = () => {
     } = useMinhasDiarias();
     return (
         <>
-            <Container>
+            <Container sx={{ mb: 5, p: 0 }}>
                 <PageTitle title={'Minhas diárias'} />
                 {filterdData.length > 0 ? (
                     isMobile ? (
-                        'dataList'
+                        <>
+                            {filterdData.map((item) => (
+                                <DataList
+                                    key={item.id}
+                                    header={
+                                        <>
+                                            Data:{' '}
+                                            {TextFormatService.reverseDate(
+                                                item.data_atendimento as string
+                                            )}
+                                            <br />
+                                            {item.nome_servico}
+                                        </>
+                                    }
+                                    body={
+                                        <>
+                                            Status:
+                                            {
+                                                DiariaService.getStatus(
+                                                    item.status as DiariaStatus
+                                                ).label
+                                            }
+                                            <br />
+                                            Valor:{' '}
+                                            {TextFormatService.currency(
+                                                item.preco
+                                            )}
+                                        </>
+                                    }
+                                />
+                            ))}
+                        </>
                     ) : (
                         <>
                             <Table
