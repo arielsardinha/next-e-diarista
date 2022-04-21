@@ -63,4 +63,13 @@ export const TextFormatService = {
 
         return enderecoFormatado;
     },
+
+    formatPhoneNumber(phoneNumber: string): string {
+        const match = phoneNumber.match(/^(\d{2})(\d{5})(\d{4})/);
+        if (match) {
+            const [_, ddd, n1, n2] = match;
+            return `(${ddd}) ${n1}-${n2}`;
+        }
+        return phoneNumber;
+    },
 };
