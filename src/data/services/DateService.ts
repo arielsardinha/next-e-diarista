@@ -18,6 +18,13 @@ export const DateService = {
         date.setFullYear(date.getFullYear() - 100);
         return date;
     },
+
+    getTimeFromDate(data: string): string {
+        const [_day, time] = data.split('T'),
+            [horas, minutes, ..._rest] = time.split(':');
+        return `${horas}:${minutes}`;
+    },
+
     transformDate(value: any, originalValue: any): any {
         if (typeof originalValue === 'string') {
             const [dia, mes, ano] = originalValue.split('/');
