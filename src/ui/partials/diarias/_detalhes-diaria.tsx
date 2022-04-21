@@ -1,4 +1,9 @@
-import { Box, CircularProgress, Container } from '@material-ui/core';
+import {
+    Box,
+    CircularProgress,
+    Container,
+    Typography,
+} from '@material-ui/core';
 import { DiariaStatus } from 'data/@types/DiariaInterface';
 import useDetalhesDiaria from 'data/hooks/pages/diarias/useDetalhesDiaria.page';
 import { DateService } from 'data/services/DateService';
@@ -7,11 +12,14 @@ import { TextFormatService } from 'data/services/TextFormatService';
 import React from 'react';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import Status from 'ui/components/data-display/Status/Status';
+import UserInformation from 'ui/components/data-display/UserInformation/UserInformation';
 
 import {
     CardsContainer,
     JobDetails,
     JobTitle,
+    UserCard,
+    UserTitle,
 } from './_detalhes-diaria.styled';
 
 const DetalhesDiaria: React.FC<{ id: string }> = ({ id }) => {
@@ -66,6 +74,46 @@ const DetalhesDiaria: React.FC<{ id: string }> = ({ id }) => {
                         <strong>{TextFormatService.getAddress(diaria)}</strong>
                     </div>
                 </JobDetails>
+
+                <UserCard>
+                    <UserTitle>Diarista</UserTitle>
+                    {diarista.id ? (
+                        <>
+                            <UserInformation
+                                picture={diarista?.foto_usuario || ''}
+                                name={diarista?.nome_completo || ''}
+                                rating={diarista?.reputacao || 1}
+                                sx={{ bgcolor: 'inherit', px: 0 }}
+                            />
+                            <Typography>
+                                Telefone:{' '}
+                                {TextFormatService.formatPhoneNumber(
+                                    diarista?.telefone || ''
+                                )}
+                            </Typography>
+                        </>
+                    ) : (
+                        <Typography>
+                            Diarista ainda não selecionado(a)
+                        </Typography>
+                    )}
+                </UserCard>
+
+                <UserCard>
+                    <UserTitle>Cliente</UserTitle>
+                    <UserInformation
+                        picture={cliente?.foto_usuario || ''}
+                        name={cliente?.nome_completo || ''}
+                        rating={cliente?.reputacao || 1}
+                        sx={{ bgcolor: 'inherit', px: 0 }}
+                    />
+                    <Typography>
+                        Telefone:{' '}
+                        {TextFormatService.formatPhoneNumber(
+                            cliente?.telefone || ''
+                        )}
+                    </Typography>
+                </UserCard>
             </CardsContainer>
         </Container>
     );
