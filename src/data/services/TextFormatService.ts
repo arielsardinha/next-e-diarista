@@ -1,3 +1,6 @@
+import { EnderecoInterface } from 'data/@types/EnderecoInterface';
+import { ValidationError } from 'yup';
+
 const CurrencyFormatter = new Intl.NumberFormat('pt-br', {
     style: 'currency',
     currency: 'BRL',
@@ -31,5 +34,33 @@ export const TextFormatService = {
 
     getNumbersFromText(text: string = ''): string {
         return text.replace(/\D/g, '');
+    },
+
+    getAddress(endereco: EnderecoInterface): string {
+        let enderecoFormatado = '';
+        enderecoFormatado += convert(endereco.logradouro, 'virgula');
+        enderecoFormatado += convert(endereco.numero, 'traco');
+        enderecoFormatado += convert(endereco.bairro, 'virgula');
+        enderecoFormatado += convert(endereco.cidade, 'traco');
+        enderecoFormatado += convert(endereco.estado, '');
+
+        function convert(
+            value: string | undefined,
+            type: 'virgula' | 'traco' | ''
+        ): string {
+            if (value) {
+                switch (type) {
+                    case 'virgula':
+                        return `${value}, `;
+                    case 'traco':
+                        return `${value}- `;
+                    case '':
+                        return `${value}`;
+                }
+            }
+            return '';
+        }
+
+        return enderecoFormatado;
     },
 };
