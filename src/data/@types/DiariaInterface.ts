@@ -31,6 +31,7 @@ export interface DiariaInterface {
 
     links?: ApiLinksInterface[];
     cliente?: UserInterface;
+    diarista?: UserInterface;
 }
 
 export enum DiariaStatus {
