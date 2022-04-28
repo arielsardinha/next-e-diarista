@@ -7,6 +7,8 @@ import Link from 'ui/components/navigation/Link/Link';
 import useCadastroDiarista from 'data/hooks/pages/cadastro/useCadastroDiarista.page';
 import { UserFormContainer } from 'ui/components/inputs/UserForm/UserForm';
 import { PageFormContainer } from 'ui/components/inputs/UserForm/UserForm.style';
+import useIsMobile from 'data/hooks/useIsMobile';
+import SideInformation from 'ui/components/data-display/SideInformation/SideInformation';
 
 // import { Component } from '@styles/pages/cadastro/diarista.styled';
 
@@ -19,7 +21,9 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const Diarista: React.FC = () => {
-    const { step, breadcrumbItems } = useCadastroDiarista();
+    const { step, breadcrumbItems } = useCadastroDiarista(),
+        isMobile = useIsMobile();
+
     return (
         <>
             <SafeEnvironment />
@@ -49,8 +53,35 @@ const Diarista: React.FC = () => {
                     }
                 />
             )}
-            <UserFormContainer >
-             <PageFormContainer></PageFormContainer>
+            <UserFormContainer>
+                <PageFormContainer>
+                    <div></div>
+                    {!isMobile && (
+                        <SideInformation
+                            title={'Como funciona?'}
+                            items={[
+                                {
+                                    title: '1 - Cadastro',
+                                    description: [
+                                        'Voce faz o cadastro e escolhe as cidades atendidas',
+                                    ],
+                                },
+                                {
+                                    title: '2 - Receba Propostas',
+                                    description: [
+                                        'Voce receberá avisos por E-mail sobre novos serviços nas cidades atendidas',
+                                    ],
+                                },
+                                {
+                                    title: '3 - Diaria agendada',
+                                    description: [
+                                        'Se seu perfil for escolhido pelo cliente, voce receberá a confirmação do agendamento',
+                                    ],
+                                },
+                            ]}
+                        />
+                    )}
+                </PageFormContainer>
             </UserFormContainer>
         </>
     );
