@@ -5,10 +5,25 @@ import Breadcrumb from 'ui/components/navigation/Breadcrumb/Breadcrumb';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import Link from 'ui/components/navigation/Link/Link';
 import useCadastroDiarista from 'data/hooks/pages/cadastro/useCadastroDiarista.page';
-import { UserFormContainer } from 'ui/components/inputs/UserForm/UserForm';
+import {
+    AddressForm,
+    FinancialForm,
+    NewContactForm,
+    PictureForm,
+    UserDataForm,
+    UserFormContainer,
+} from 'ui/components/inputs/UserForm/UserForm';
 import { PageFormContainer } from 'ui/components/inputs/UserForm/UserForm.style';
 import useIsMobile from 'data/hooks/useIsMobile';
 import SideInformation from 'ui/components/data-display/SideInformation/SideInformation';
+import { FormProvider } from 'react-hook-form';
+import {
+    Button,
+    Container,
+    Divider,
+    Paper,
+    Typography,
+} from '@material-ui/core';
 
 // import { Component } from '@styles/pages/cadastro/diarista.styled';
 
@@ -21,7 +36,7 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const Diarista: React.FC = () => {
-    const { step, breadcrumbItems } = useCadastroDiarista(),
+    const { step, breadcrumbItems, userForm } = useCadastroDiarista(),
         isMobile = useIsMobile();
 
     return (
@@ -55,7 +70,56 @@ const Diarista: React.FC = () => {
             )}
             <UserFormContainer>
                 <PageFormContainer>
-                    <div></div>
+                    {step === 1 && (
+                        <FormProvider {...userForm}>
+                            <Paper sx={{ p: 4 }}>
+                                <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
+                                    Dados pessoais
+                                </Typography>
+                                <UserDataForm />
+                                <Divider sx={{ mb: 5 }} />
+                                <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
+                                    Financeiro
+                                </Typography>
+                                <FinancialForm />
+                                <Divider sx={{ mb: 5 }} />
+                                <Typography sx={{ fontWeight: 'bold' }}>
+                                    Hora de self! Envie um self segurando o
+                                    documento
+                                </Typography>
+                                <Typography sx={{ pb: 2 }}>
+                                    Para sua segurança, todos os profissionais e
+                                    clientes precisam enviar
+                                </Typography>
+                                <PictureForm />
+                                <Typography
+                                    sx={{ pt: 1, pb: 5 }}
+                                    variant={'body2'}
+                                >
+                                    Essa foto não será vista por ninguém.
+                                </Typography>
+                                <Divider sx={{ mb: 5 }} />
+                                <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
+                                    Endereço
+                                </Typography>
+                                <AddressForm />
+                                <Divider sx={{ mb: 5 }} />
+                                <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
+                                    Dados de acesso
+                                </Typography>
+                                <NewContactForm />
+                                <Container sx={{ textAlign: 'center' }}>
+                                    <Button
+                                        variant={'contained'}
+                                        color={'secondary'}
+                                        type={'submit'}
+                                    >
+                                        Cadastrar e escolher cidades
+                                    </Button>
+                                </Container>
+                            </Paper>
+                        </FormProvider>
+                    )}
                     {!isMobile && (
                         <SideInformation
                             title={'Como funciona?'}
