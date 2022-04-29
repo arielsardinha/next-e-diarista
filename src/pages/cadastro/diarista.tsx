@@ -7,6 +7,7 @@ import Link from 'ui/components/navigation/Link/Link';
 import useCadastroDiarista from 'data/hooks/pages/cadastro/useCadastroDiarista.page';
 import {
     AddressForm,
+    CitiesForm,
     FinancialForm,
     NewContactForm,
     PictureForm,
@@ -36,7 +37,8 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const Diarista: React.FC = () => {
-    const { step, breadcrumbItems, userForm } = useCadastroDiarista(),
+    const { step, breadcrumbItems, userForm, addressListForm } =
+            useCadastroDiarista(),
         isMobile = useIsMobile();
 
     return (
@@ -120,6 +122,27 @@ const Diarista: React.FC = () => {
                             </Paper>
                         </FormProvider>
                     )}
+
+                    {step === 2 && (
+                        <FormProvider {...addressListForm}>
+                            <Paper sx={{ p: 4 }}>
+                                <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
+                                    Selecione a cidade
+                                </Typography>
+                                <CitiesForm estado={'SP'} />
+                                <Container sx={{ textAlign: 'center' }}>
+                                    <Button
+                                        variant={'contained'}
+                                        color={'secondary'}
+                                        type={'submit'}
+                                    >
+                                        Finalizar o cadastro
+                                    </Button>
+                                </Container>
+                            </Paper>
+                        </FormProvider>
+                    )}
+
                     {!isMobile && (
                         <SideInformation
                             title={'Como funciona?'}
