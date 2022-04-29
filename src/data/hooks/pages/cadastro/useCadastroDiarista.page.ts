@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { EnderecoInterface } from 'data/@types/EnderecoInterface';
 import { CadastroDiaristaFormDataInterface } from 'data/@types/FormInterface';
@@ -17,22 +18,25 @@ import { useForm } from 'react-hook-form';
 
 export default function useCadastroDiarista() {
     const [step, setStep] = useState(1),
+        [isWaitingResponse, setWaitingResponse] = useState(false),
         breadcrumbItems = ['Identificação', 'Cidades atendidas'],
         userForm = useForm<CadastroDiaristaFormDataInterface>({
-            resolver: FormSchemaService.userData()
-                .concat(FormSchemaService.address())
-                .concat(FormSchemaService.newContact()),
+            resolver: yupResolver(
+                FormSchemaService.userData()
+                    .concat(FormSchemaService.address())
+                    .concat(FormSchemaService.newContact())
+            ),
         }),
-        addressListForm = useForm<CadastroDiaristaFormDataInterface>(),
-        [isWaitingResponse, setIsWaitingResponse] = useState(false),
         [newUser, setNewUser] = useState<UserInterface>(),
         [newAddress, setNewAddress] = useState<EnderecoInterface>(),
+        addressListForm = useForm<CadastroDiaristaFormDataInterface>(),
+        enderecosAtendidos = addressListForm.watch('enderecosAtendidos'),
         { externalServicesState } = useContext(ExternalServicesContext),
-        [sucessoCadastro, setSucessoCadastro] = useState(false),
-        enderecosAtendidos = addressListForm.watch('enderecosAtendidos');
+        [sucessoCadastro, setSucessoCadastro] = useState(false);
 
     async function onUserSubmit(data: CadastroDiaristaFormDataInterface) {
-        setIsWaitingResponse(true);
+        setWaitingResponse(true);
+
         const newUserLink = linksResolver(
             externalServicesState.externalServices,
             'cadastrar_usuario'
@@ -41,7 +45,6 @@ export default function useCadastroDiarista() {
         if (newUserLink) {
             try {
                 await cadastrarUsuario(data, newUserLink);
-                console.log()
             } catch (error) {
                 handleUserError(error);
             }
@@ -50,14 +53,13 @@ export default function useCadastroDiarista() {
 
     function handleUserError(error: any) {
         UserService.handleNewUserError(error, userForm);
-        setIsWaitingResponse(false);
+        setWaitingResponse(false);
     }
 
     async function cadastrarUsuario(
         data: CadastroDiaristaFormDataInterface,
         link: ApiLinksInterface
     ) {
-        console.log(data)
         const newUser = await UserService.cadastrar(
             data.usuario,
             UserType.Diarista,
@@ -67,20 +69,20 @@ export default function useCadastroDiarista() {
         if (newUser) {
             setNewUser(newUser);
             cadastrarEndereco(data, newUser);
-            setIsWaitingResponse(false);
+            setWaitingResponse(false);
             setStep(2);
         }
     }
 
-    function cadastrarEndereco(
+    async function cadastrarEndereco(
         data: CadastroDiaristaFormDataInterface,
         newUser: UserInterface
     ) {
         ApiService.defaults.headers.Authorization =
-            'Bearer' + newUser?.token?.access;
+            'Bearer ' + newUser?.token?.access;
 
-        LocalStorage.set('token', newUser?.token?.access);
-        LocalStorage.set('token_refresh', newUser);
+        LocalStorage.set('token', newUser.token?.access);
+        LocalStorage.set('token_refresh', newUser.token?.refresh);
 
         ApiServiceHateoas(
             newUser.links,
@@ -89,9 +91,9 @@ export default function useCadastroDiarista() {
                 const newAddress = (
                     await request<EnderecoInterface>({
                         data: {
-                            ...data.endereco,
+                            ...data?.endereco,
                             cep: TextFormatService.getNumbersFromText(
-                                data?.endereco?.cep
+                                data?.endereco.cep
                             ),
                         },
                     })
@@ -109,10 +111,13 @@ export default function useCadastroDiarista() {
                 'relacionar_cidades',
                 async (request) => {
                     try {
-                        setIsWaitingResponse(true);
-                        await request<any>({
-                            data: { cidades: data?.enderecosAtendidos },
+                        setWaitingResponse(true);
+                        await request({
+                            data: {
+                                cidades: data?.enderecosAtendidos,
+                            },
                         });
+
                         setSucessoCadastro(true);
                     } catch (error) {}
                 }
@@ -122,14 +127,14 @@ export default function useCadastroDiarista() {
 
     return {
         step,
+        isWaitingResponse,
         breadcrumbItems,
         userForm,
-        addressListForm,
-        isWaitingResponse,
-        sucessoCadastro,
-        enderecosAtendidos,
         onUserSubmit,
+        addressListForm,
         onAddressSubmit,
         newAddress,
+        sucessoCadastro,
+        enderecosAtendidos,
     };
 }

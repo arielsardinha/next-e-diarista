@@ -168,7 +168,7 @@ const Diarista: React.FC = () => {
                                         type={'submit'}
                                         disabled={
                                             isWaitingResponse ||
-                                            enderecosAtendidos.length === 0
+                                            enderecosAtendidos?.length === 0
                                         }
                                     >
                                         Finalizar o cadastro
