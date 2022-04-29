@@ -107,6 +107,11 @@ export const FinancialData = styled(BaseGrid)`
     grid-template-columns: 1fr;
 `;
 
+export const CitiesSelection = styled(BaseGrid)`
+    grid-template-columns: 1fr;
+    grid-template-areas: "busca-cidade";
+`;
+
 export const PictureSelection = styled(BaseGrid)`
     grid-template-columns: 1fr;
     padding: 0;
