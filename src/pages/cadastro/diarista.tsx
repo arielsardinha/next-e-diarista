@@ -38,8 +38,18 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const Diarista: React.FC = () => {
-    const { step, breadcrumbItems, userForm, addressListForm } =
-            useCadastroDiarista(),
+    const {
+            step,
+            breadcrumbItems,
+            userForm,
+            addressListForm,
+            isWaitingResponse,
+            sucessoCadastro,
+            enderecosAtendidos,
+            onUserSubmit,
+            onAddressSubmit,
+            newAddress,
+        } = useCadastroDiarista(),
         isMobile = useIsMobile();
 
     return (
