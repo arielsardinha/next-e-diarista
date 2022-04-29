@@ -25,6 +25,7 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core';
+import Dialog from 'ui/components/feedback/Dialog/Dialog';
 
 // import { Component } from '@styles/pages/cadastro/diarista.styled';
 
@@ -170,6 +171,16 @@ const Diarista: React.FC = () => {
                     )}
                 </PageFormContainer>
             </UserFormContainer>
+            <Dialog
+                title={'Cadastro realizado com sucesso !'}
+                isOpen={false}
+                noCancel
+                confirmLabel={'Ver oportunidades'}
+                onConfirm={() => window.location.reload()}
+                onClose={() => {}}
+            >
+                Agora voce pode visualizar as oportunidades da região
+            </Dialog>
         </>
     );
 };
