@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GetStaticProps } from 'next';
 import SafeEnvironment from 'ui/components/feedback/SafeEnvironment/SafeEnvironment';
 import Breadcrumb from 'ui/components/navigation/Breadcrumb/Breadcrumb';
@@ -26,6 +26,7 @@ import {
     Typography,
 } from '@material-ui/core';
 import Dialog from 'ui/components/feedback/Dialog/Dialog';
+import { BrowserService } from 'data/services/BrowserService';
 
 // import { Component } from '@styles/pages/cadastro/diarista.styled';
 
@@ -51,6 +52,10 @@ const Diarista: React.FC = () => {
             newAddress,
         } = useCadastroDiarista(),
         isMobile = useIsMobile();
+
+    useEffect(() => {
+        BrowserService.scrollToTop();
+    }, [step]);
 
     return (
         <>
@@ -85,11 +90,15 @@ const Diarista: React.FC = () => {
                 <PageFormContainer>
                     {step === 1 && (
                         <FormProvider {...userForm}>
-                            <Paper sx={{ p: 4 }}>
+                            <Paper
+                                sx={{ p: 4 }}
+                                component={'form'}
+                                onSubmit={userForm.handleSubmit(onUserSubmit)}
+                            >
                                 <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
                                     Dados pessoais
                                 </Typography>
-                                <UserDataForm />
+                                <UserDataForm cadastro={true}/>
                                 <Divider sx={{ mb: 5 }} />
                                 <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
                                     Financeiro
@@ -126,6 +135,7 @@ const Diarista: React.FC = () => {
                                         variant={'contained'}
                                         color={'secondary'}
                                         type={'submit'}
+                                        disabled={isWaitingResponse}
                                     >
                                         Cadastrar e escolher cidades
                                     </Button>
@@ -136,16 +146,30 @@ const Diarista: React.FC = () => {
 
                     {step === 2 && (
                         <FormProvider {...addressListForm}>
-                            <Paper sx={{ p: 4 }}>
+                            <Paper
+                                sx={{ p: 4 }}
+                                component={'form'}
+                                onSubmit={addressListForm.handleSubmit(
+                                    onAddressSubmit
+                                )}
+                            >
                                 <Typography sx={{ fontWeight: 'bold', pb: 2 }}>
                                     Selecione a cidade
                                 </Typography>
-                                <CitiesForm estado={'SP'} />
+
+                                {newAddress && (
+                                    <CitiesForm estado={newAddress.estado} />
+                                )}
+
                                 <Container sx={{ textAlign: 'center' }}>
                                     <Button
                                         variant={'contained'}
                                         color={'secondary'}
                                         type={'submit'}
+                                        disabled={
+                                            isWaitingResponse ||
+                                            enderecosAtendidos.length === 0
+                                        }
                                     >
                                         Finalizar o cadastro
                                     </Button>
@@ -183,7 +207,7 @@ const Diarista: React.FC = () => {
             </UserFormContainer>
             <Dialog
                 title={'Cadastro realizado com sucesso !'}
-                isOpen={false}
+                isOpen={sucessoCadastro}
                 noCancel
                 confirmLabel={'Ver oportunidades'}
                 onConfirm={() => window.location.reload()}

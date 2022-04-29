@@ -41,6 +41,7 @@ export default function useCadastroDiarista() {
         if (newUserLink) {
             try {
                 await cadastrarUsuario(data, newUserLink);
+                console.log()
             } catch (error) {
                 handleUserError(error);
             }
@@ -56,6 +57,7 @@ export default function useCadastroDiarista() {
         data: CadastroDiaristaFormDataInterface,
         link: ApiLinksInterface
     ) {
+        console.log(data)
         const newUser = await UserService.cadastrar(
             data.usuario,
             UserType.Diarista,
