@@ -1,7 +1,13 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
 import useOportunidadesTrabalho from 'data/hooks/pages/useOportunidades.page';
-import { Box, Container, Divider, Typography } from '@material-ui/core';
+import {
+    Box,
+    Container,
+    Divider,
+    Snackbar,
+    Typography,
+} from '@material-ui/core';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import DataList from 'ui/components/data-display/DataList/DataList';
 import Table, {
@@ -34,6 +40,8 @@ const Oportunidades: React.FC = () => {
         oportunidadeSelecionada,
         setOportunidadeSelecionada,
         seCandidatar,
+        mensagemSnackbar,
+        setMensagemSnackbar,
     } = useOportunidadesTrabalho();
     return (
         <>
@@ -99,7 +107,7 @@ const Oportunidades: React.FC = () => {
             </Container>
             {oportunidadeSelecionada && (
                 <Dialog
-                    isOpen={oportunidadeSelecionada !== undefined || true}
+                    isOpen={oportunidadeSelecionada !== undefined}
                     title={'Se candidatar à diária'}
                     subtitle={
                         'Tem certeza que deseja se candidatar à diária abaixo ?'
@@ -159,6 +167,12 @@ const Oportunidades: React.FC = () => {
                     </Typography>
                 </Dialog>
             )}
+            <Snackbar
+                open={mensagemSnackbar.length > 0}
+                message={mensagemSnackbar}
+                autoHideDuration={4000}
+                onClose={() => setMensagemSnackbar('')}
+            />
         </>
     );
 };

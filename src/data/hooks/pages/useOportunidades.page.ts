@@ -9,7 +9,8 @@ export default function useOportunidadesTrabalho() {
         { currentPage, setCurrentPage, totalPages, itemsPorPage } =
             usePagination(oportunidades || [], 5),
         [oportunidadeSelecionada, setOportunidadeSelecionada] =
-            useState<Oportunidade>();
+            useState<Oportunidade>(),
+        [mensagemSnackbar, setMensagemSnackbar] = useState<string>('');
 
     function seCandidatar(oportunidade: Oportunidade) {}
     return {
@@ -22,5 +23,7 @@ export default function useOportunidadesTrabalho() {
         oportunidadeSelecionada,
         setOportunidadeSelecionada,
         seCandidatar,
+        mensagemSnackbar,
+        setMensagemSnackbar,
     };
 }
