@@ -1,10 +1,11 @@
 import { Oportunidade } from 'data/@types/OportunidadeInterface';
 import { UserContext } from 'data/contexts/UserContext';
-import { linksResolver } from 'data/services/ApiService';
+import { ApiServiceHateoas, linksResolver } from 'data/services/ApiService';
 import { useContext, useState } from 'react';
 import { useApiHateoas } from '../useApi.hook';
 import useIsMobile from '../useIsMobile';
 import usePagination from '../usePagination.hook';
+import { mutate } from 'swr';
 
 export default function useOportunidadesTrabalho() {
     const isMobile = useIsMobile(),
@@ -31,12 +32,29 @@ export default function useOportunidadesTrabalho() {
         return total;
     }
 
-    function seCandidatar(oportunidade: Oportunidade) {}
+    async function seCandidatar(oportunidade: Oportunidade) {
+        ApiServiceHateoas(
+            oportunidade.links,
+            'candidatar_diaria',
+            async (request) => {
+                try {
+                    await request();
+                    setMensagemSnackbar('Candidatura enviada!');
+                    setOportunidadeSelecionada(undefined);
+                    atualizarOportunidades();
+                } catch (error) {}
+            }
+        );
+    }
 
     function podeCandidatar(oportunidade: Oportunidade) {
         return (
             linksResolver(oportunidade.links, 'candidatar_diaria') !== undefined
         );
+    }
+
+    function atualizarOportunidades() {
+        mutate('lista_oportunidade');
     }
 
     return {
