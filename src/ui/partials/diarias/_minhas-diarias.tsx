@@ -29,6 +29,7 @@ const MinhasDiarias: React.FC = () => {
         diariaConfirmar,
         setDiariaConfirmar,
         podeConfirmar,
+        confirmarDiaria,
     } = useMinhasDiarias();
     return (
         <>
@@ -180,7 +181,7 @@ const MinhasDiarias: React.FC = () => {
                 <ConfirmDialog
                     diaria={diariaConfirmar}
                     onCancel={() => setDiariaConfirmar({} as DiariaInterface)}
-                    onConfirm={() => {}}
+                    onConfirm={confirmarDiaria}
                 />
             )}
         </>
