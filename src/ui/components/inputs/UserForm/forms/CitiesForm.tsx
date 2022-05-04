@@ -3,7 +3,7 @@ import {
     CircularProgress,
     TextField,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { CidadeInterface } from 'data/@types/EnderecoInterface';
 import useCitiesForm from 'data/hooks/components/inputs/UserForm/forms/useCitiesForm';
 import ChipField from 'ui/components/data-display/ChipField/ChipField';

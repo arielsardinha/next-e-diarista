@@ -8,7 +8,7 @@ import {
     Divider,
     Snackbar,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import DataList from 'ui/components/data-display/DataList/DataList';
 import Table, {

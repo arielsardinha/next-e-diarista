@@ -24,7 +24,7 @@ import {
     Divider,
     Paper,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import Dialog from 'ui/components/feedback/Dialog/Dialog';
 import { BrowserService } from 'data/services/BrowserService';
 

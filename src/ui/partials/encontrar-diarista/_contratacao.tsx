@@ -7,7 +7,7 @@ import {
     Paper,
     Typography,
     Container,
-} from '@material-ui/core';
+} from '@mui/material';
 import useContratacao from 'data/hooks/pages/useContratacao.page';
 import useIsMobile from 'data/hooks/useIsMobile';
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';

@@ -1,5 +1,5 @@
 import React from 'react';
-// import { } from '@material-ui/core';
+// import { } from '@mui/material';
 import { ChipsContainer, ChipStyled } from './ChipField.style';
 
 export interface ChipFieldProps {

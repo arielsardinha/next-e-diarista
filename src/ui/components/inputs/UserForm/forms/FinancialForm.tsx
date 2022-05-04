@@ -1,4 +1,4 @@
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { FinancialData } from '../UserForm.style';
 

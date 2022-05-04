@@ -4,7 +4,7 @@ import {
     JobInformationContainer,
     JobInformationIcon,
 } from './JobInformation.style';
-// import { } from '@material-ui/core';
+// import { } from '@mui/material';
 // import { Component } from './JobInformation.style';
 
 export interface JobInformationProps {}
