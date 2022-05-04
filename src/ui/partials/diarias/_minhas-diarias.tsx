@@ -1,5 +1,5 @@
 import { Button, Container, Typography } from '@mui/material';
-import { DiariaStatus } from 'data/@types/DiariaInterface';
+import { DiariaInterface, DiariaStatus } from 'data/@types/DiariaInterface';
 import useMinhasDiarias from 'data/hooks/pages/diarias/useMinhasDiarias.page';
 import { DiariaService } from 'data/services/DiariaService';
 import { TextFormatService } from 'data/services/TextFormatService';
@@ -13,6 +13,7 @@ import Table, {
     TableRow,
 } from 'ui/components/data-display/Table/Table';
 import Link from 'ui/components/navigation/Link/Link';
+import { ConfirmDialog } from './_minhas_diarias_dialogs';
 
 // import { Component } from './_minhas-diarias.styled';
 
@@ -175,6 +176,13 @@ const MinhasDiarias: React.FC = () => {
                     </Typography>
                 )}
             </Container>
+            {diariaConfirmar.id && (
+                <ConfirmDialog
+                    diaria={diariaConfirmar}
+                    onCancel={() => setDiariaConfirmar({} as DiariaInterface)}
+                    onConfirm={() => {}}
+                />
+            )}
         </>
     );
 };
