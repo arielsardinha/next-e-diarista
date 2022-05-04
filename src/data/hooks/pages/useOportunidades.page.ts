@@ -1,5 +1,6 @@
 import { Oportunidade } from 'data/@types/OportunidadeInterface';
 import { UserContext } from 'data/contexts/UserContext';
+import { linksResolver } from 'data/services/ApiService';
 import { useContext, useState } from 'react';
 import { useApiHateoas } from '../useApi.hook';
 import useIsMobile from '../useIsMobile';
@@ -32,6 +33,12 @@ export default function useOportunidadesTrabalho() {
 
     function seCandidatar(oportunidade: Oportunidade) {}
 
+    function podeCandidatar(oportunidade: Oportunidade) {
+        return (
+            linksResolver(oportunidade.links, 'candidatar_diaria') !== undefined
+        );
+    }
+
     return {
         isMobile,
         oportunidades,
@@ -44,6 +51,7 @@ export default function useOportunidadesTrabalho() {
         seCandidatar,
         mensagemSnackbar,
         setMensagemSnackbar,
-        totalComodos
+        totalComodos,
+        podeCandidatar,
     };
 }

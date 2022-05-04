@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import useOportunidadesTrabalho from 'data/hooks/pages/useOportunidades.page';
 import {
     Box,
+    Button,
     Container,
     Divider,
     Snackbar,
@@ -44,6 +45,7 @@ const Oportunidades: React.FC = () => {
         mensagemSnackbar,
         setMensagemSnackbar,
         totalComodos,
+        podeCandidatar,
     } = useOportunidadesTrabalho();
     return (
         <>
@@ -73,6 +75,23 @@ const Oportunidades: React.FC = () => {
                                         <>
                                             Cidade: {item.cidade} <br /> Número
                                             de cômodos: {totalComodos(item)}
+                                        </>
+                                    }
+                                    actions={
+                                        <>
+                                            {podeCandidatar(item) && (
+                                                <Button
+                                                    variant={'contained'}
+                                                    color={'secondary'}
+                                                    onClick={() =>
+                                                        setOportunidadeSelecionada(
+                                                            item
+                                                        )
+                                                    }
+                                                >
+                                                    Se candidatar
+                                                </Button>
+                                            )}
                                         </>
                                     }
                                 />
@@ -115,7 +134,19 @@ const Oportunidades: React.FC = () => {
                                                 item.preco
                                             )}
                                         </TableCell>
-                                        <TableCell></TableCell>
+                                        <TableCell>
+                                            {podeCandidatar(item) && (
+                                                <Button
+                                                    onClick={() =>
+                                                        setOportunidadeSelecionada(
+                                                            item
+                                                        )
+                                                    }
+                                                >
+                                                    Se candidatar
+                                                </Button>
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 )}
                             />
