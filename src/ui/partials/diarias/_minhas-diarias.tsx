@@ -25,6 +25,9 @@ const MinhasDiarias: React.FC = () => {
         itemsPorPage,
         filterdData,
         podeVisualizar,
+        diariaConfirmar,
+        setDiariaConfirmar,
+        podeConfirmar,
     } = useMinhasDiarias();
     return (
         <>
@@ -71,6 +74,17 @@ const MinhasDiarias: React.FC = () => {
                                                     variant={'outlined'}
                                                 >
                                                     Detalhes
+                                                </Button>
+                                            )}
+                                            {podeConfirmar(item) && (
+                                                <Button
+                                                    color={'success'}
+                                                    variant={'contained'}
+                                                    onClick={() =>
+                                                        setDiariaConfirmar(item)
+                                                    }
+                                                >
+                                                    Confirmar presença
                                                 </Button>
                                             )}
                                         </>
@@ -129,6 +143,18 @@ const MinhasDiarias: React.FC = () => {
                                                 <Link href={`?id=${item.id}`}>
                                                     Detalhes
                                                 </Link>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {podeConfirmar(item) && (
+                                                <Button
+                                                    color={'success'}
+                                                    onClick={() =>
+                                                        setDiariaConfirmar(item)
+                                                    }
+                                                >
+                                                    Confirmar presença
+                                                </Button>
                                             )}
                                         </TableCell>
                                     </TableRow>
