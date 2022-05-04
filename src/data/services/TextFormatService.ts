@@ -18,6 +18,13 @@ export const TextFormatService = {
         return date.split('-').reverse().join('/');
     },
 
+    dateTime(date = ''): string {
+        const dia = TextFormatService.reverseDate(date),
+            hora = date.substring(11, 5);
+
+        return `${dia} às ${hora}`;
+    },
+
     currency(price = 0): string {
         if (isNaN(price)) {
             price = 0;

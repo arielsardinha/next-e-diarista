@@ -20,6 +20,7 @@ import Dialog from 'ui/components/feedback/Dialog/Dialog';
 import JobInformation from 'ui/components/data-display/JobInformation/JobInformation';
 import UserInformation from 'ui/components/data-display/UserInformation/UserInformation';
 import { TextFormatService } from 'data/services/TextFormatService';
+import { EnderecoInterface } from 'data/@types/EnderecoInterface';
 
 // import { Component } from '@styles/pages/oportunidades.styled';
 
@@ -179,19 +180,37 @@ const Oportunidades: React.FC = () => {
                         <JobInformation>
                             <>
                                 <div>
-                                    Data: <strong>01/01/2022</strong>
+                                    Data:{' '}
+                                    <strong>
+                                        {TextFormatService.dateTime(
+                                            oportunidadeSelecionada?.data_atendimento as string
+                                        )}
+                                    </strong>
                                 </div>
-                                <div>Praça da sé, 1B - Sé, São paulo - SP</div>
                                 <div>
-                                    <strong>Valor: R$ 140,00</strong>
+                                    {TextFormatService.getAddress(
+                                        oportunidadeSelecionada as EnderecoInterface
+                                    )}
+                                </div>
+                                <div>
+                                    <strong>
+                                        Valor:{' '}
+                                        {TextFormatService.currency(
+                                            oportunidadeSelecionada?.preco
+                                        )}
+                                    </strong>
                                 </div>
                             </>
                         </JobInformation>
                     </Box>
                     <UserInformation
-                        name={'Ariel'}
-                        rating={3}
-                        picture={'https://github.com/arielsardinha.png'}
+                        name={
+                            oportunidadeSelecionada?.cliente.nome_completo || ''
+                        }
+                        rating={oportunidadeSelecionada?.cliente.reputacao || 0}
+                        picture={
+                            oportunidadeSelecionada?.cliente.foto_usuario || ''
+                        }
                     />
                     <Divider />
                     {oportunidadeSelecionada?.avaliacoes_cliente.length > 0 && (
@@ -205,13 +224,19 @@ const Oportunidades: React.FC = () => {
                             >
                                 Última avaliação do cliente
                             </Typography>
-                            <UserInformation
-                                name={'Ariel'}
-                                rating={3}
-                                picture={'https://github.com/arielsardinha.png'}
-                                isRating={true}
-                                description={'Algum texto'}
-                            />
+
+                            {oportunidadeSelecionada?.avaliacoes_cliente.map(
+                                (item, index) => (
+                                    <UserInformation
+                                        key={index}
+                                        name={item.nome_avaliador}
+                                        rating={item.nota}
+                                        picture={item.foto_avaliador}
+                                        description={item.descricao}
+                                        isRating={true}
+                                    />
+                                )
+                            )}
                         </>
                     )}
                     <Typography
