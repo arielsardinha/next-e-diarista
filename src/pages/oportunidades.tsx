@@ -18,6 +18,7 @@ import Table, {
 import Dialog from 'ui/components/feedback/Dialog/Dialog';
 import JobInformation from 'ui/components/data-display/JobInformation/JobInformation';
 import UserInformation from 'ui/components/data-display/UserInformation/UserInformation';
+import { TextFormatService } from 'data/services/TextFormatService';
 
 // import { Component } from '@styles/pages/oportunidades.styled';
 
@@ -42,6 +43,7 @@ const Oportunidades: React.FC = () => {
         seCandidatar,
         mensagemSnackbar,
         setMensagemSnackbar,
+        totalComodos,
     } = useOportunidadesTrabalho();
     return (
         <>
@@ -50,20 +52,31 @@ const Oportunidades: React.FC = () => {
                 {oportunidades.length > 0 ? (
                     isMobile ? (
                         <>
-                            <DataList
-                                header={
-                                    <>
-                                        Data: 01/01/2000 <br /> Limpeza Pesada{' '}
-                                        <br /> R$ 140,00
-                                    </>
-                                }
-                                body={
-                                    <>
-                                        Cidade: São paulo <br /> Número de
-                                        cômodos: 2
-                                    </>
-                                }
-                            />
+                            {oportunidades.map((item) => (
+                                <DataList
+                                    key={item.id}
+                                    header={
+                                        <>
+                                            Data:{' '}
+                                            {TextFormatService.reverseDate(
+                                                item.data_atendimento as string
+                                            )}
+                                            <br />
+                                            {item.nome_servico}
+                                            <br />
+                                            {TextFormatService.currency(
+                                                item.preco
+                                            )}
+                                        </>
+                                    }
+                                    body={
+                                        <>
+                                            Cidade: {item.cidade} <br /> Número
+                                            de cômodos: {totalComodos(item)}
+                                        </>
+                                    }
+                                />
+                            ))}
                         </>
                     ) : (
                         <>
@@ -76,16 +89,32 @@ const Oportunidades: React.FC = () => {
                                     'Valor',
                                     '',
                                 ]}
-                                data={[]}
-                                rowElement={() => (
-                                    <TableRow>
+                                data={oportunidades}
+                                itemsPorPage={itemsPorPage}
+                                currentPage={currentPage}
+                                rowElement={(item, index) => (
+                                    <TableRow key={index}>
                                         <TableCell>
-                                            <strong>01/01/2022</strong>
+                                            <strong>
+                                                {TextFormatService.reverseDate(
+                                                    item.data_atendimento as string
+                                                )}
+                                            </strong>
                                         </TableCell>
-                                        <TableCell>Limpeza Pesada</TableCell>
-                                        <TableCell>3 cômodos</TableCell>
-                                        <TableCell>São Paulo - SP</TableCell>
-                                        <TableCell>R$ 140,00</TableCell>
+                                        <TableCell>
+                                            {item.nome_servico}
+                                        </TableCell>
+                                        <TableCell>
+                                            {totalComodos(item)} cômodos
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.cidade} - {item.estado}
+                                        </TableCell>
+                                        <TableCell>
+                                            {TextFormatService.currency(
+                                                item.preco
+                                            )}
+                                        </TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                 )}
